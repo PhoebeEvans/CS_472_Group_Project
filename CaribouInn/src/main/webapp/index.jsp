@@ -10,6 +10,7 @@
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="assets/css/main.css" />
+		<link rel="stylesheet" href="assets/css/customCSS.css" /> <!-- CUSTOM CSS FOR US -->
 		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
 	</head>
 	<body class="landing is-preload">
@@ -23,14 +24,20 @@
 						<nav id="nav">
 							<ul>
 								<li class="special">
+							        <% if (session.getAttribute("firstName") != null) { %>
+							            Hello, <%= session.getAttribute("firstName") %>
+							        <% } else { %>
+							            Hello, Guest
+							        <% } %>
+							    </li>
+								<li class="special">
 									<a href="#menu" class="menuToggle"><span>Menu</span></a>
 									<div id="menu">
 										<ul>
 											<li><a href="index.html">Home</a></li>
 											<li><a href="generic.html">Amenities</a></li>
 											<li><a href="elements.html">Reserve a Room</a></li>
-											<li><a href="#">Sign Up</a></li>
-											<li><a href="#">Log In</a></li>
+											<li><a href="login.html">Log In or Sign Up</a></li>
 										</ul>
 									</div>
 								</li>
@@ -60,11 +67,6 @@
 								<p>Aliquam ut ex ut augue consectetur interdum. Donec amet imperdiet eleifend<br />
 								fringilla tincidunt. Nullam dui leo Aenean mi ligula, rhoncus ullamcorper.</p>
 							</header>
-							<ul class="icons major">
-								<li><span class="icon fa-gem major style1"><span class="label">Lorem</span></span></li>
-								<li><span class="icon fa-heart major style2"><span class="label">Ipsum</span></span></li>
-								<li><span class="icon solid fa-code major style3"><span class="label">Dolor</span></span></li>
-							</ul>
 						</div>
 					</section>
 
