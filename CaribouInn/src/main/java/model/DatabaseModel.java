@@ -14,18 +14,23 @@ public class DatabaseModel {
     public Connection connect() {
         Connection conn = null;
         try {
+            // Explicitly load the SQLite JDBC driver class
+            Class.forName("org.sqlite.JDBC");
             // Establish the connection
             conn = DriverManager.getConnection(DATABASE_URL);
+        } catch (ClassNotFoundException e) {
+            System.err.println("Could not load the SQLite JDBC Driver.");
+            e.printStackTrace();
         } catch (SQLException e) {
-            System.out.println("Connection to SQLite has failed.");
+            System.err.println("Connection to SQLite has failed.");
             e.printStackTrace();
         }
         return conn;
     }
 
+
+
     public DatabaseModel() {
-        createNewDatabase();
-        createAccountsTable();
     }
 
     private void createNewDatabase() {
@@ -38,7 +43,7 @@ public class DatabaseModel {
         }
     }
 
-    private void createAccountsTable() {
+    public void createAccountsTable() {
         String sql = "CREATE TABLE IF NOT EXISTS accounts ("
                 + " id integer PRIMARY KEY AUTOINCREMENT,"
                 + " firstName text NOT NULL,"
@@ -117,7 +122,7 @@ public class DatabaseModel {
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
                 return resultSet.getString("firstName");
-            }
+            } 
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }

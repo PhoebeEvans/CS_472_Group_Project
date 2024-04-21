@@ -40,22 +40,26 @@
                     <section>
                         <h3>Login to Your Account</h3>
                         <form method="post" action="AccountServlet" id="loginForm">
-                            <div class="row gtr-uniform">
-                                <div class="col-12">
-                                    <input type="email" name="email" id="email" value="" placeholder="Email" />
-                                </div>
-                                <div class="col-12">
-                                    <input type="password" name="password" id="password" value="" placeholder="Password" />
-                                </div>
-                                <!-- Break -->
-                                <div class="col-12">
-                                    <ul class="actions">
-                                        <li><input type="submit" value="Log In" class="primary" /></li>
-                                        <li><input type="reset" value="Reset" /></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </form>
+						    <div class="row gtr-uniform">
+						        <div class="col-12">
+						            <input type="email" name="email" id="email" value="" placeholder="Email" />
+						        </div>
+						        <div class="col-12">
+						            <input type="password" name="password" id="password" value="" placeholder="Password" />
+						        </div>
+						        <!-- Hidden input field for action -->
+							        <div class="col-12">
+							            <input type="hidden" name="action" value="login" />
+							        </div>
+						        <!-- Break -->
+						        <div class="col-12">
+						            <ul class="actions">
+						                <li><input type="submit" value="Log In" class="primary" /></li>
+						                <li><a href="createAccount.html" class="button">Don't have an account? Create one here.</a></li>
+						            </ul>
+						        </div>
+						    </div>
+						</form>
                     </section>
                 </div>
             </section>
