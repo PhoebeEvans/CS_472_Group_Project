@@ -1,0 +1,31 @@
+[{
+    "roomName": "Single King Suite",
+    "sleepCount": 2,
+    "available": "Available"
+},
+{
+    "roomName": "Single Queen Suite",
+    "sleepCount": 2,
+    "available": "Available"
+},
+{
+    "roomName": "Single Full Suite",
+    "sleepCount": 2,
+    "available": "Available"
+},
+{
+    "roomName": "Double King Suite",
+    "sleepCount": 4,
+    "available": "Available"
+},
+{
+    "roomName": "Double Queen Suite",
+    "sleepCount": 4,
+    "available": "Available"
+},
+{
+    "roomName": "Double Full Suite",
+    "sleepCount": 4,
+    "available": "Unavailable"
+}
+]
