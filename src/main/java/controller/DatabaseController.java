@@ -6,6 +6,8 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
 import java.io.IOException;
 
 @WebServlet("/AccountServlet")
@@ -89,6 +91,24 @@ public class DatabaseController extends HttpServlet {
             System.out.println("No recognized action specified."); // Log unrecognized action
             // Redirect to a page that indicates an error or unrecognized action.
             response.sendRedirect("errorPage.jsp"); // replace 'errorPage.jsp' with the actual error page
+        }
+    }
+    
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String action = request.getParameter("action");
+        if ("logout".equals(action)) {
+            System.out.println("Attempting to log out");
+            HttpSession session = request.getSession(false); //retrieve session
+            if (session != null) {
+                session.invalidate(); // invalidate session to clear attributes
+                System.out.println("Session invalidated successfully.");
+            }
+            response.sendRedirect("index.jsp");
+        } 
+        
+        else {
+            response.sendRedirect("errorPage.jsp");
         }
     }
 

@@ -1,5 +1,8 @@
 package controller;
 
+import java.net.URL;
+import java.net.URLClassLoader;
+
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
@@ -19,6 +22,12 @@ public class AppContextListener implements ServletContextListener {
         } else {
             System.out.println("Test account already exists or failed to add.");
         }
+        
+        URL[] urls = ((URLClassLoader) Thread.currentThread().getContextClassLoader()).getURLs();
+        for (URL url : urls) {
+            System.out.println("LOADED URLS:" + url.getFile());
+        }
+
     }
 
     @Override

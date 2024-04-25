@@ -1,6 +1,7 @@
 package model;
 
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -31,17 +32,22 @@ public class DatabaseModel {
 
 
     public DatabaseModel() {
+    	createNewDatabase();
     }
 
     private void createNewDatabase() {
+        // The SQLite JDBC driver will create the database file if it doesn't exist
         try (Connection conn = this.connect()) {
             if (conn != null) {
-                System.out.println("A new database has been created.");
+                DatabaseMetaData meta = conn.getMetaData();
+                System.out.println("The driver name is " + meta.getDriverName());
+                System.out.println("A new database has been created or already exists.");
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
     }
+
 
     public void createAccountsTable() {
         String sql = "CREATE TABLE IF NOT EXISTS accounts ("

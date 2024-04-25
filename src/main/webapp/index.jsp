@@ -37,7 +37,11 @@
 											<li><a href="index.html">Home</a></li>
 											<li><a href="generic.html">Amenities</a></li>
 											<li><a href="elements.html">Reserve a Room</a></li>
-											<li><a href="login.html">Log In or Sign Up</a></li>
+											<% if (session.getAttribute("firstName") != null) { %>
+                                      	 		<li><a href="AccountServlet?action=logout">Sign Out</a></li>
+		                                    <% } else { %>
+		                                        <li><a href="login.html">Log In or Sign Up</a></li>
+		                                    <% } %>
 										</ul>
 									</div>
 								</li>
