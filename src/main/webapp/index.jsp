@@ -36,6 +36,7 @@
 										<ul>
 											<li><a href="index.html">Home</a></li>
 											<li><a href="generic.html">Amenities</a></li>
+											<li><a href="floorplan.html">Floor Plan</a></li>
 											<li><a href="elements.html">Reserve a Room</a></li>
 											<li><a href="login.html">Log In or Sign Up</a></li>
 										</ul>
