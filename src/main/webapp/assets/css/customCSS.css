@@ -6,16 +6,16 @@
 */
 
 .hello-guest {
-	color: #ffffff;
-	padding-right: 1em;
-	display: inline-block;
-	vertical-align: top;
-	font-family: 'Font-Family-Here', sans-serif;
-	font-size: 0.8em;
-	font-weight: 400;
-	position: relative;
-	top: -3px;
-	right: 0;
-	margin-right: 36px;
-	text-align: center;
+    color: #ffffff; 
+    padding-right: 1em; 
+    display: inline-block; 
+    vertical-align: top; 
+    font-family: 'Font-Family-Here', sans-serif; 
+    font-size: 0.8em; 
+    font-weight: 400; 
+    position: relative; 
+    top: -3px; 
+    right: 0;
+    margin-right: 36px;
+    text-align: center;
 }
