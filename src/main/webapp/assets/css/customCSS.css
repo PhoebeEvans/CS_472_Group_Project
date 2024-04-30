@@ -1,0 +1,21 @@
+@import url(fontawesome-all.min.css);
+@import url("https://fonts.googleapis.com/css?family=Open+Sans:400,400italic,600,600italic,800,800italic");
+
+/*
+	custom CSS for us to modify and keep separate from the template.
+*/
+
+.hello-guest {
+	color: #ffffff;
+	padding-right: 1em;
+	display: inline-block;
+	vertical-align: top;
+	font-family: 'Font-Family-Here', sans-serif;
+	font-size: 0.8em;
+	font-weight: 400;
+	position: relative;
+	top: -3px;
+	right: 0;
+	margin-right: 36px;
+	text-align: center;
+}
