@@ -1,0 +1,96 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Edit Profile - The Caribou Inn</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+</head>
+<body>
+
+    <!-- Page Wrapper -->
+    <div id="page-wrapper">
+
+        <!-- Header -->
+        <header id="header" class="alt">
+            <h1><a href="index.html">Caribou Inn</a></h1>
+            <nav id="nav">
+                <ul>
+                    <li class="special">Hello, User</li>
+                    <li class="special">
+                        <a href="#menu" class="menuToggle"><span>Menu</span></a>
+                        <div id="menu">
+                            <ul>
+                                <li><a href="index.html">Home</a></li>
+                                <li><a href="generic.html">Amenities</a></li>
+                                <li><a href="elements.html">Reserve a Room</a></li>
+                                <li><a href="login.html">Log Out</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                </ul>
+            </nav>
+        </header>
+
+        <!-- Main -->
+        <article id="main">
+            <section class="wrapper style5">
+                <div class="inner">
+                    <section>
+                        <h3>Update Your Profile</h3>
+                        <p>Current information: John Doe, johndoe@example.com</p> <!-- Current information block -->
+                        <form method="post" action="ProfileUpdateServlet" id="updateProfileForm">
+                            <div class="row gtr-uniform">
+                                <div class="col-6">
+                                    <label>First Name</label>
+                                    <input type="text" name="firstName" id="firstName" value="John" placeholder="First Name" />
+                                </div>
+                                <div class="col-6">
+                                    <label>Last Name</label>
+                                    <input type="text" name="lastName" id="lastName" value="Doe" placeholder="Last Name" />
+                                </div>
+                                <div class="col-12">
+                                    <label>Email</label>
+                                    <input type="email" name="email" id="email" value="johndoe@example.com" placeholder="Email" />
+                                </div>
+                                <div class="col-12">
+                                    <label>Old Password</label>
+                                    <input type="password" name="oldPassword" id="oldPassword" value="" placeholder="Old Password" />
+                                </div>
+                                <div class="col-12">
+                                    <label>New Password</label>
+                                    <input type="password" name="newPassword" id="newPassword" value="" placeholder="New Password" />
+                                </div>
+                                <!-- Break -->
+                                <div class="col-12">
+                                    <ul class="actions">
+                                        <li><input type="submit" value="Update Profile" class="primary" /></li>
+                                        <li><a href="index.jsp" class="button">Back to Home</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </form>
+                    </section>
+                </div>
+            </section>
+        </article>
+
+        <!-- Footer -->
+        <footer id="footer">
+            ...
+        </footer>
+
+    </div>
+
+    <!-- Scripts -->
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/jquery.scrollex.min.js"></script>
+    <script src="assets/js/jquery.scrolly.min.js"></script>
+    <script src="assets/js/browser.min.js"></script>
+    <script src="assets/js/breakpoints.min.js"></script>
+    <script src="assets/js/util.js"></script>
+    <script src="assets/js/main.js"></script>
+
+</body>
+</html>
