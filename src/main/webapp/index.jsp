@@ -38,6 +38,7 @@
 											<li><a href="generic.html">Amenities</a></li>
 											<li><a href="elements.html">Reserve a Room</a></li>
 											<li><a href="login.html">Log In or Sign Up</a></li>
+											<li><a href="employeePage.html">Employee Access</a></li>
 										</ul>
 									</div>
 								</li>

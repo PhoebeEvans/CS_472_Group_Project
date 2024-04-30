@@ -46,29 +46,68 @@
 		<article id="main">
 			<header>
 				<h2>Employee Access</h2>
-				<p>Run reports, access and edit reservations, and access and edit user profile</p>
+				<p>Run reports, check room availability, and access and edit user profile</p>
 			</header>
 			<section class="wrapper style5">
 				<div class="inner">
 
 					<h3>Run a report</h3>
-					<p>From here there should be fields to enter in a date range to run a financial report. Once submitted 
-					it should access a database of transaction that has not been created yet</p>
+					<p>Enter in a date range to run a financial report. Once submitted 
+					it should access a database of transactions.</p>
+					<div class="form">
+                        <form class="grid">
+                            <input type="date" id="beginDate" placeholder="Start Date">
+                            <input type="date" id="endDate" placeholder="End Date">
+                        </form>
+                    </div>
 					
 					<ul class="actions">
-						<li><input type="submit" value="Submit" class="primary" /></li>
+						<li><input type="submit" value="Submit" class="primary" /></li> <!-- Change to run financial report -->
 					</ul>
 
 					<hr />
 
-					<h3>Access reservations</h3>
-					<p>Access and alter current reservations from database. Should be able to create reservations as well</p>
-					
+					<h3>Check Room Availability</h3>
+					<p>Check how many rooms are available on the selected day.</p>
+					<div class="form">
+                        <form class="grid">
+                        	<div class="row gtr-uniform">
+                        		<div class="col-6">
+						            <input type="date" id="searchDate" placeholder="Check In Date">
+						        </div>
+                            	<div class="col-12">
+						            <input type="button" onclick="filterRooms()" class="primary" value="Check Availability"> <!-- Change to check availability -->
+						        </div>
+						     </div>
+                        </form>
+                    </div>
 					<hr />
 						
 					<h3>Access Accounts</h3>
-					<p>Should be able to enter in name and dob of the customer to pull up their profile for editing</p>
-
+					<p>Enter in user's full name and email to access account.</p>
+					<form method="post" action="AccountServlet" id="createAccountForm">
+						    <div class="row gtr-uniform">
+						        <div class="col-6">
+						            <input type="text" name="firstName" id="firstName" value="" placeholder="First Name" />
+						        </div>
+						        <div class="col-6">
+						            <input type="text" name="lastName" id="lastName" value="" placeholder="Last Name" />
+						        </div>
+						        <div class="col-12">
+						            <input type="email" name="email" id="email" value="" placeholder="Email" />
+						        </div>
+						        <!-- Hidden input field for action -->
+						        <div class="col-12">
+							        <input type="hidden" name="action" value="createAccount" /> <!-- Change to access account method -->
+						        </div>
+						        <!-- Break -->
+						        <div class="col-12">
+						            <ul class="actions">
+						                <li><input type="submit" value="Search" class="primary" /></li>
+						            </ul>
+						        </div>
+						    </div>
+						</form>
 				</div>
 			</section>
 		</article>
