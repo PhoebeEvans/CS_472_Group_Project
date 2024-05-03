@@ -5,6 +5,10 @@
 	custom CSS for us to modify and keep separate from the template.
 */
 
+input[type="date"] {
+    color: #000; 
+}
+
 .hello-guest {
     color: #ffffff; 
     padding-right: 1em; 

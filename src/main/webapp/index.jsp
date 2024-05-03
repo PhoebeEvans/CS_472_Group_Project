@@ -34,11 +34,24 @@
 									<a href="#menu" class="menuToggle"><span>Menu</span></a>
 									<div id="menu">
 										<ul>
-											<li><a href="index.html">Home</a></li>
+											<!--MENU LIST THAT IS DEPENDANT ON USER ACCOUNT  -->
+											<% if (session.getAttribute("isAdmin") != null) { %>
+												<li><a href="employeePage.jsp">Administrator Portal</a></li>
+		                                    <% } %>
+											<li><a href="index.jsp">Home</a></li>
 											<li><a href="generic.html">Amenities</a></li>
 											<li><a href="elements.html">Reserve a Room</a></li>
+<<<<<<< HEAD
 											<li><a href="login.html">Log In or Sign Up</a></li>
 											<li><a href="employeePage.html">Employee Access</a></li>
+=======
+											<% if (session.getAttribute("firstName") != null) { %>
+												<li><a href="editProfile.jsp">Edit Profile</a></li>
+                                      	 		<li><a href="AccountServlet?action=logout">Sign Out</a></li>
+		                                    <% } else { %>
+		                                        <li><a href="login.html">Log In or Sign Up</a></li>
+		                                    <% } %>
+>>>>>>> Feature-MasterBackUp
 										</ul>
 									</div>
 								</li>

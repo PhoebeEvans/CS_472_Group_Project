@@ -1,11 +1,21 @@
 package controller;
 
 import model.DatabaseModel;
+<<<<<<< HEAD
+=======
+
+import javax.servlet.RequestDispatcher;
+>>>>>>> Feature-MasterBackUp
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+<<<<<<< HEAD
+=======
+import javax.servlet.http.HttpSession;
+
+>>>>>>> Feature-MasterBackUp
 import java.io.IOException;
 
 @WebServlet("/AccountServlet")
@@ -34,9 +44,24 @@ public class DatabaseController extends HttpServlet {
                 System.out.println("User is valid. Setting session attribute."); // Log valid user
                 // Assume you have a method to get the first name based on email
                 String firstName = dbModel.getFirstNameByEmail(email);
+<<<<<<< HEAD
 
                 // Set up the user session
                 request.getSession().setAttribute("firstName", firstName);
+=======
+                String lastName = dbModel.getLastNameByEmail(email);
+                Boolean isAdmin = dbModel.getAdminStatusByEmail(email);
+                
+                String strIsAdmin = null;
+                
+                if(isAdmin) strIsAdmin = "admin"; //session can only check if object is null, so set to null if not admin, "admin" otherwise
+
+                // Set up the user session
+                request.getSession().setAttribute("firstName", firstName);
+                request.getSession().setAttribute("lastName", lastName);
+                request.getSession().setAttribute("email", email);
+                request.getSession().setAttribute("isAdmin", strIsAdmin);
+>>>>>>> Feature-MasterBackUp
                 
                 //logging
                 System.out.println("Session attribute set for firstName: " + firstName);
@@ -49,7 +74,11 @@ public class DatabaseController extends HttpServlet {
             } else {
                 System.out.println("Invalid login credentials provided."); // Log invalid credentials
                 // Handle login failure
+<<<<<<< HEAD
                 response.getWriter().write("Invalid login credentials!");
+=======
+                response.sendRedirect("badCredentials.jsp?referrer=login.html");
+>>>>>>> Feature-MasterBackUp
             }
         } else if ("createAccount".equals(action)) {
         	System.out.println("Attempting to create an account"); // Log account creation attempt
@@ -68,7 +97,15 @@ public class DatabaseController extends HttpServlet {
             // Check if account creation was successful
             if (accountCreated) {
             	// Set up the user session
+<<<<<<< HEAD
                 request.getSession().setAttribute("firstName", firstName);
+=======
+            	String strIsAdmin = null; //upon account creation, account will never be an admin initially
+                request.getSession().setAttribute("firstName", firstName);
+                request.getSession().setAttribute("lastName", lastName);
+                request.getSession().setAttribute("email", email);
+                request.getSession().setAttribute("isAdmin", strIsAdmin);
+>>>>>>> Feature-MasterBackUp
                 
                 //logging
                 System.out.println("Session attribute set for firstName: " + firstName);
@@ -78,18 +115,167 @@ public class DatabaseController extends HttpServlet {
                 System.out.println("Redirecting to index.jsp"); // Log redirection
                 response.sendRedirect("index.jsp");
                 return;
+<<<<<<< HEAD
             } else {
+=======
+            }
+
+            else {
+>>>>>>> Feature-MasterBackUp
                 System.out.println("Failed to create account for email: " + email); // Log account creation failure
                 // Redirect to an error page or return some error message
                 response.sendRedirect("errorPage.jsp"); // Redirect to an error page
             }
         } 
         
+<<<<<<< HEAD
+=======
+        else if ("accessOtherAccount".equals(action)) {
+            handleAccessOtherAccount(request, response);
+        }
+        
+        else if ("updateOtherUser".equals(action)) {
+        	
+        	//need to verify that the admin is the one changing other's accounts
+        	String adminEmail = request.getParameter("adminEmail");
+            String adminPassword = request.getParameter("adminPassword");
+            
+            if (dbModel.checkCredentials(adminEmail, adminPassword)) {
+            	handleUpdateOtherUser(request, response);
+            } else {
+                // Admin credentials are not valid
+                response.sendRedirect("badCredentials.jsp?referrer=editProfileAsAdmin.jsp");
+            }
+            
+        }
+        
+        else if ("updateProfile".equals(action)) {
+            handleProfileUpdate(request, response);
+        }
+        
+>>>>>>> Feature-MasterBackUp
         else {
             System.out.println("No recognized action specified."); // Log unrecognized action
             // Redirect to a page that indicates an error or unrecognized action.
             response.sendRedirect("errorPage.jsp"); // replace 'errorPage.jsp' with the actual error page
         }
     }
+<<<<<<< HEAD
+=======
+    
+    private void handleAccessOtherAccount(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        HttpSession session = request.getSession();
+        String otherUserEmail = request.getParameter("otherUserEmail");
+
+        // Security check: Ensure the current user is an admin
+        String currentUserAdminStatus = (String) session.getAttribute("isAdmin");
+        if (!"admin".equals(currentUserAdminStatus)) {
+            System.out.println("Access denied: Current user is not an admin.");
+            response.sendRedirect("accessDenied.jsp");
+            return;
+        }
+        
+        System.out.println("Attempting to access account of: " + otherUserEmail);
+
+        String otherUserFirstName = dbModel.getFirstNameByEmail(otherUserEmail);
+        String otherUserLastName = dbModel.getLastNameByEmail(otherUserEmail);
+        Boolean otherUserIsAdmin = dbModel.getAdminStatusByEmail(otherUserEmail);		
+        		
+        if (otherUserFirstName != null) {
+            request.setAttribute("otherUserFirstName", otherUserFirstName);
+            request.setAttribute("otherUserLastName", otherUserLastName);
+            request.setAttribute("otherUserEmail", otherUserEmail);
+            request.setAttribute("otherUserIsAdmin", otherUserIsAdmin);
+            
+            System.out.println("Redirecting to editProfileAsAdmin.jsp for email: " + otherUserEmail);
+            RequestDispatcher dispatcher = request.getRequestDispatcher("editProfileAsAdmin.jsp");
+            dispatcher.forward(request, response);
+        } else {
+            System.out.println("No user found with the email: " + otherUserEmail);
+            response.sendRedirect("userNotFound.jsp?referrer=employeePage.jsp");
+        }
+    }
+    
+    private void handleUpdateOtherUser(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        HttpSession session = request.getSession();
+        String adminEmail = request.getParameter("adminEmail");
+        String adminPassword = request.getParameter("adminPassword");
+        
+        boolean otherUserIsAdmin = "true".equals(request.getParameter("otherUserIsAdmin"));
+        System.out.println("Admin status to set: " + otherUserIsAdmin); //debug
+
+
+        // Check admin credentials
+        if (dbModel.checkCredentials(adminEmail, adminPassword)) {
+            // Retrieve other user's info from the form
+            String otherUserFirstName = request.getParameter("otherUserFirstName");
+            String otherUserLastName = request.getParameter("otherUserLastName");
+            String otherUserEmail = request.getParameter("otherUserEmail");
+            String otherUserNewPassword = request.getParameter("otherUserNewPassword");
+            // Perform the update in the database
+            boolean updateSuccessful = dbModel.updateProfile(otherUserEmail, otherUserFirstName, otherUserLastName, otherUserNewPassword, otherUserIsAdmin);
+
+            if (updateSuccessful) {
+                System.out.println("Other user profile updated successfully.");
+                response.sendRedirect("profileUpdatedSuccess.jsp");
+            } else {
+                System.out.println("Failed to update other user profile.");
+                response.sendRedirect("profileUpdatedError.jsp");
+            }
+        } else {
+            System.out.println("Admin credentials invalid.");
+            response.sendRedirect("badCredentials.jsp?referrer=editProfileAsAdmin.jsp");
+        }
+    }
+    
+    private void handleProfileUpdate(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String email = request.getParameter("email");
+        String oldPassword = request.getParameter("oldPassword");
+        String newPassword = request.getParameter("newPassword");
+        String firstName = request.getParameter("firstName");
+        String lastName = request.getParameter("lastName");
+        
+        System.out.println("edit profile: email: " + email);
+        System.out.println("edit profile: password: " + oldPassword);
+
+        // Verify old password
+        if (dbModel.checkCredentials(email, oldPassword)) {
+            boolean updateSuccessful = dbModel.updateProfile(email, firstName, lastName, newPassword, false);
+            
+            //update session info with new info
+            request.getSession().setAttribute("firstName", firstName);
+            request.getSession().setAttribute("lastName", lastName);
+            request.getSession().setAttribute("email", email);
+
+            if (updateSuccessful) {
+                response.sendRedirect("profileUpdatedSuccess.jsp");
+            } else {
+                response.sendRedirect("profileUpdatedError.jsp");
+            }
+        } else {
+        	response.sendRedirect("badCredentials.jsp?referrer=editProfile.jsp");
+
+        }
+    }
+
+    
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String action = request.getParameter("action");
+        if ("logout".equals(action)) {
+            System.out.println("Attempting to log out");
+            HttpSession session = request.getSession(false); //retrieve session
+            if (session != null) {
+                session.invalidate(); // invalidate session to clear attributes
+                System.out.println("Session invalidated successfully.");
+            }
+            response.sendRedirect("index.jsp");
+        } 
+        
+        else {
+            response.sendRedirect("errorPage.jsp");
+        }
+    }
+>>>>>>> Feature-MasterBackUp
 
 }
