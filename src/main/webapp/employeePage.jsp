@@ -67,15 +67,34 @@
 					<p>Enter in a date range to run a financial report. Once submitted 
 					it should access a database of transactions.</p>
 					<div class="form">
-                        <form class="grid">
-                            <input type="date" id="beginDate" placeholder="Start Date">
-                            <input type="date" id="endDate" placeholder="End Date">
-                        </form>
+                        <form method="post" action="ServeTransactionsFromDateRange">
+						    <div class="row gtr-uniform">
+						        <div class="col-3">
+						            <label for="beginDate">Start Date:</label>
+						            <input type="date" id="beginDate" name="beginDate" placeholder="Start Date" required>
+						        </div>
+						        <div class="col-3">
+						            <label for="endDate">End Date:</label>
+						            <input type="date" id="endDate" name="endDate" placeholder="End Date" required>
+						        </div>
+						        <div class="col-12">
+						            <ul class="actions">
+						                <li><input type="submit" value="Get Transactions in Date Range" class="primary" /></li>
+						            </ul>
+						        </div>
+						    </div>
+						</form>
+						
+						<form method="post" action="ServeTransactionsAll">
+						    <div class="row gtr-uniform">
+						        <div class="col-12">
+						            <ul class="actions">
+						                <li><input type="submit" value="Get All Transactions" class="primary" /></li>
+						            </ul>
+						        </div>
+						    </div>
+						</form>
                     </div>
-					
-					<ul class="actions">
-						<li><input type="submit" value="Submit" class="primary" /></li> <!-- Change to run financial report -->
-					</ul>
 
 					<hr />
 
