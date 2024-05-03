@@ -1,3 +1,5 @@
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
 <!DOCTYPE HTML>
 <html>
 <head>
@@ -17,15 +19,29 @@
             <h1><a href="index.html">Caribou Inn</a></h1>
             <nav id="nav">
                 <ul>
-                    <li class="special">Hello, User</li>
+                    <li class="special">
+                        <% if (session.getAttribute("firstName") != null) { %>
+                            Hello, <%= session.getAttribute("firstName") %>
+                        <% } else { %>
+                            Hello, Guest
+                        <% } %>
+                    </li>
                     <li class="special">
                         <a href="#menu" class="menuToggle"><span>Menu</span></a>
                         <div id="menu">
                             <ul>
-                                <li><a href="index.html">Home</a></li>
+                                <% if (session.getAttribute("isAdmin") != null) { %>
+                                    <li><a href="employeePage.jsp">Administrator Portal</a></li>
+                                <% } %>
+                                <li><a href="index.jsp">Home</a></li>
                                 <li><a href="generic.html">Amenities</a></li>
                                 <li><a href="elements.html">Reserve a Room</a></li>
-                                <li><a href="login.html">Log Out</a></li>
+                                <% if (session.getAttribute("firstName") != null) { %>
+                                    <li><a href="editProfile.jsp">Edit Profile</a></li>
+                                    <li><a href="AccountServlet?action=logout">Sign Out</a></li>
+                                <% } else { %>
+                                    <li><a href="login.html">Log In or Sign Up</a></li>
+                                <% } %>
                             </ul>
                         </div>
                     </li>
@@ -39,28 +55,34 @@
                 <div class="inner">
                     <section>
                         <h3>Update Your Profile</h3>
-                        <p>Current information: John Doe, johndoe@example.com</p> <!-- Current information block -->
-                        <form method="post" action="ProfileUpdateServlet" id="updateProfileForm">
+                        <p>Current information:</p>
+                        <p> <%= session.getAttribute("firstName") %> <%= session.getAttribute("lastName") %> </p>
+                        <p> <%= session.getAttribute("email") %></p>
+                        <form method="post" action="AccountServlet" id="updateProfileForm">
                             <div class="row gtr-uniform">
                                 <div class="col-6">
                                     <label>First Name</label>
-                                    <input type="text" name="firstName" id="firstName" value="John" placeholder="First Name" />
+                                    <input type="text" name="firstName" id="firstName" value="<%= session.getAttribute("firstName") %>" placeholder="First Name" />
                                 </div>
                                 <div class="col-6">
                                     <label>Last Name</label>
-                                    <input type="text" name="lastName" id="lastName" value="Doe" placeholder="Last Name" />
+                                    <input type="text" name="lastName" id="lastName" value="<%= session.getAttribute("lastName") %>" placeholder="Last Name" />
                                 </div>
                                 <div class="col-12">
                                     <label>Email</label>
-                                    <input type="email" name="email" id="email" value="johndoe@example.com" placeholder="Email" />
+                                    <input type="email" name="email" id="email" value="<%= session.getAttribute("email") %>" placeholder="Email" />
                                 </div>
                                 <div class="col-12">
-                                    <label>Old Password</label>
+                                    <label>Old Password (Required)</label>
                                     <input type="password" name="oldPassword" id="oldPassword" value="" placeholder="Old Password" />
                                 </div>
                                 <div class="col-12">
                                     <label>New Password</label>
                                     <input type="password" name="newPassword" id="newPassword" value="" placeholder="New Password" />
+                                </div>
+                                <!-- Hidden input field for action -->
+                                <div class="col-12">
+                                    <input type="hidden" name="action" value="updateProfile" />
                                 </div>
                                 <!-- Break -->
                                 <div class="col-12">

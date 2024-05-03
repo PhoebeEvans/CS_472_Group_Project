@@ -3,7 +3,7 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-    <title>Error - The Caribou Inn</title>
+    <title>Login Error - The Caribou Inn</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
     <link rel="stylesheet" href="assets/css/main.css" />
@@ -38,12 +38,11 @@
             <section class="wrapper style5">
                 <div class="inner">
                     <section>
-                        <h3>An Error Occurred</h3>
-                        <p>Sorry, something went wrong. Please try again or contact support if the problem persists.</p>
-                        <!-- Optionally provide a link for the user to go back or to the homepage -->
+                        <h3>Login Error</h3>
+                        <p>The credentials you've entered are incorrect...</p>
                         <ul class="actions">
-                            <li><a href="index.jsp" class="button primary">Go to Homepage</a></li>
-                            <li><a href="login.html" class="button">Try Again</a></li>
+                            <li><a href="index.jsp" class="button primary">Back to Home</a></li>
+                            <li><a href="<%= request.getParameter("referrer") != null ? request.getParameter("referrer") : "index.jsp" %>" class="button">Try Again</a></li>
                         </ul>
                     </section>
                 </div>
@@ -52,7 +51,7 @@
 
         <!-- Footer -->
         <footer id="footer">
-            <!-- Footer content -->
+            <!-- Footer content-->
         </footer>
 
     </div>
