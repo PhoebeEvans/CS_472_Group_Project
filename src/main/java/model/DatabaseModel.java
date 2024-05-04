@@ -1,10 +1,7 @@
 package model;
 
 import java.sql.Connection;
-<<<<<<< HEAD
-=======
 import java.sql.DatabaseMetaData;
->>>>>>> Feature-MasterBackUp
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -35,14 +32,6 @@ public class DatabaseModel {
 
 
     public DatabaseModel() {
-<<<<<<< HEAD
-    }
-
-    private void createNewDatabase() {
-        try (Connection conn = this.connect()) {
-            if (conn != null) {
-                System.out.println("A new database has been created.");
-=======
     	createNewDatabase();
     }
 
@@ -53,17 +42,13 @@ public class DatabaseModel {
                 DatabaseMetaData meta = conn.getMetaData();
                 System.out.println("The driver name is " + meta.getDriverName());
                 System.out.println("A new database has been created or already exists.");
->>>>>>> Feature-MasterBackUp
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
     }
 
-<<<<<<< HEAD
-=======
 
->>>>>>> Feature-MasterBackUp
     public void createAccountsTable() {
         String sql = "CREATE TABLE IF NOT EXISTS accounts ("
                 + " id integer PRIMARY KEY AUTOINCREMENT,"
@@ -82,8 +67,6 @@ public class DatabaseModel {
             System.out.println(e.getMessage());
         }
     }
-<<<<<<< HEAD
-=======
     
     public void createReservationsTable() {
         String sql = "CREATE TABLE IF NOT EXISTS reservations ("
@@ -237,7 +220,6 @@ public class DatabaseModel {
         return false;
     }
 
->>>>>>> Feature-MasterBackUp
 
     public boolean addAccount(String firstName, String lastName, String email, String password, boolean isAdmin) {
         String sql = "INSERT INTO accounts(firstName, lastName, email, password, isAdmin) VALUES(?,?,?,?,?)";
@@ -258,8 +240,6 @@ public class DatabaseModel {
             return false;
         }
     }
-<<<<<<< HEAD
-=======
     
     public boolean addTransaction(int reservationID, String email, double totalAmount, String startDate, String endDate) {
         String sql = "INSERT INTO transactions(email, totalAmount, startDate, endDate, reservationID) VALUES(?,?,?,?,?)";
@@ -299,7 +279,6 @@ public class DatabaseModel {
         }
     }
 
->>>>>>> Feature-MasterBackUp
 
 
     public static void main(String[] args) {
@@ -314,16 +293,11 @@ public class DatabaseModel {
         }
     }
 
-<<<<<<< HEAD
-    public boolean checkCredentials(String email, String password) {
-        String sql = "SELECT id FROM accounts WHERE email = ? AND password = ?";
-=======
 
     public boolean checkCredentials(String email, String password) {
         String sql = "SELECT id FROM accounts WHERE email = ? AND password = ?";
         
         System.out.println("DB MODEL credentials check: " + email + " " + password);
->>>>>>> Feature-MasterBackUp
 
         try (Connection conn = this.connect();
              PreparedStatement statement = conn.prepareStatement(sql)) {
@@ -348,10 +322,6 @@ public class DatabaseModel {
 
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-<<<<<<< HEAD
-                return resultSet.getString("firstName");
-            } 
-=======
             	System.out.println("User's first name found with email: " + email); //debug
                 return resultSet.getString("firstName");
             } 
@@ -375,15 +345,12 @@ public class DatabaseModel {
             if (resultSet.next()) {
                 return resultSet.getString("lastName");
             } 
->>>>>>> Feature-MasterBackUp
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
         return null;
     }
 
-<<<<<<< HEAD
-=======
 
 
 	public Boolean getAdminStatusByEmail(String email) {
@@ -439,5 +406,4 @@ public class DatabaseModel {
 	}
 
 
->>>>>>> Feature-MasterBackUp
 }

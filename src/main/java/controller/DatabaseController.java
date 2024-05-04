@@ -1,21 +1,15 @@
 package controller;
 
 import model.DatabaseModel;
-<<<<<<< HEAD
-=======
 
 import javax.servlet.RequestDispatcher;
->>>>>>> Feature-MasterBackUp
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-<<<<<<< HEAD
-=======
 import javax.servlet.http.HttpSession;
 
->>>>>>> Feature-MasterBackUp
 import java.io.IOException;
 
 @WebServlet("/AccountServlet")
@@ -44,11 +38,6 @@ public class DatabaseController extends HttpServlet {
                 System.out.println("User is valid. Setting session attribute."); // Log valid user
                 // Assume you have a method to get the first name based on email
                 String firstName = dbModel.getFirstNameByEmail(email);
-<<<<<<< HEAD
-
-                // Set up the user session
-                request.getSession().setAttribute("firstName", firstName);
-=======
                 String lastName = dbModel.getLastNameByEmail(email);
                 Boolean isAdmin = dbModel.getAdminStatusByEmail(email);
                 
@@ -61,7 +50,6 @@ public class DatabaseController extends HttpServlet {
                 request.getSession().setAttribute("lastName", lastName);
                 request.getSession().setAttribute("email", email);
                 request.getSession().setAttribute("isAdmin", strIsAdmin);
->>>>>>> Feature-MasterBackUp
                 
                 //logging
                 System.out.println("Session attribute set for firstName: " + firstName);
@@ -74,11 +62,7 @@ public class DatabaseController extends HttpServlet {
             } else {
                 System.out.println("Invalid login credentials provided."); // Log invalid credentials
                 // Handle login failure
-<<<<<<< HEAD
-                response.getWriter().write("Invalid login credentials!");
-=======
                 response.sendRedirect("badCredentials.jsp?referrer=login.html");
->>>>>>> Feature-MasterBackUp
             }
         } else if ("createAccount".equals(action)) {
         	System.out.println("Attempting to create an account"); // Log account creation attempt
@@ -97,15 +81,11 @@ public class DatabaseController extends HttpServlet {
             // Check if account creation was successful
             if (accountCreated) {
             	// Set up the user session
-<<<<<<< HEAD
-                request.getSession().setAttribute("firstName", firstName);
-=======
             	String strIsAdmin = null; //upon account creation, account will never be an admin initially
                 request.getSession().setAttribute("firstName", firstName);
                 request.getSession().setAttribute("lastName", lastName);
                 request.getSession().setAttribute("email", email);
                 request.getSession().setAttribute("isAdmin", strIsAdmin);
->>>>>>> Feature-MasterBackUp
                 
                 //logging
                 System.out.println("Session attribute set for firstName: " + firstName);
@@ -115,21 +95,15 @@ public class DatabaseController extends HttpServlet {
                 System.out.println("Redirecting to index.jsp"); // Log redirection
                 response.sendRedirect("index.jsp");
                 return;
-<<<<<<< HEAD
-            } else {
-=======
             }
 
             else {
->>>>>>> Feature-MasterBackUp
                 System.out.println("Failed to create account for email: " + email); // Log account creation failure
                 // Redirect to an error page or return some error message
                 response.sendRedirect("errorPage.jsp"); // Redirect to an error page
             }
         } 
         
-<<<<<<< HEAD
-=======
         else if ("accessOtherAccount".equals(action)) {
             handleAccessOtherAccount(request, response);
         }
@@ -153,15 +127,12 @@ public class DatabaseController extends HttpServlet {
             handleProfileUpdate(request, response);
         }
         
->>>>>>> Feature-MasterBackUp
         else {
             System.out.println("No recognized action specified."); // Log unrecognized action
             // Redirect to a page that indicates an error or unrecognized action.
             response.sendRedirect("errorPage.jsp"); // replace 'errorPage.jsp' with the actual error page
         }
     }
-<<<<<<< HEAD
-=======
     
     private void handleAccessOtherAccount(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         HttpSession session = request.getSession();
@@ -276,6 +247,5 @@ public class DatabaseController extends HttpServlet {
             response.sendRedirect("errorPage.jsp");
         }
     }
->>>>>>> Feature-MasterBackUp
 
 }
