@@ -76,7 +76,7 @@ public class DatabaseController extends HttpServlet {
             boolean isAdmin = false; // Or you can take this as a parameter from the form if needed.
 
             // Attempt to add the account
-            boolean accountCreated = dbModel.addAccount(firstName, lastName, email, password, isAdmin);
+            boolean accountCreated = dbModel.addAccount(firstName, lastName, email, password, isAdmin, null, null, null);
 
             // Check if account creation was successful
             if (accountCreated) {
@@ -92,7 +92,7 @@ public class DatabaseController extends HttpServlet {
 
 
                 // Redirect to the home page
-                System.out.println("Redirecting to index.jsp"); // Log redirection
+                System.out.println("Redirecting to index.jsp"); // Log redirectionm
                 response.sendRedirect("index.jsp");
                 return;
             }

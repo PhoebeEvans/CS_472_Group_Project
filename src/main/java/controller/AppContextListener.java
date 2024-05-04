@@ -20,7 +20,7 @@ public class AppContextListener implements ServletContextListener {
         dbModel.createRoomsTable();
         
         // Add the test account if it doesn't exist
-        boolean isAdded = dbModel.addAccount("John", "Doe", "johndoe@gmail.com", "password", true);
+        boolean isAdded = dbModel.addAccount("John", "Doe", "johndoe@gmail.com", "password", true, null, null, null);
         if (isAdded) {
             System.out.println("Test account successfully added.");
         } else {

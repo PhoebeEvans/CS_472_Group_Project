@@ -56,13 +56,16 @@ public class DatabaseModel {
                 + " lastName text NOT NULL,"
                 + " email text NOT NULL UNIQUE,"
                 + " password text NOT NULL,"
-                + " isAdmin boolean NOT NULL"
+                + " isAdmin boolean NOT NULL,"
+                + " cardNumber text," //cc info can be null
+                + " cardExpiration text," 
+                + " cardCCV text" 
                 + ");";
 
         try (Connection conn = this.connect();
              Statement stmt = conn.createStatement()) {
             stmt.execute(sql);
-            System.out.println("The accounts table has been created.");
+            System.out.println("The accounts table has been created with credit card fields.");
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -102,25 +105,43 @@ public class DatabaseModel {
                 + " bedNumber INTEGER NOT NULL,"
                 + " bedSize TEXT NOT NULL,"
                 + " hasBalcony BOOLEAN NOT NULL,"
-                + " nonsmoking BOOLEAN NOT NULL"
+                + " nonsmoking BOOLEAN NOT NULL,"
+                + " price DECIMAL(10, 2) NOT NULL" 
                 + ");";
 
         try (Connection conn = this.connect();
              Statement stmt = conn.createStatement()) {
             stmt.execute(sql);
-            System.out.println("The rooms table has been created.");
+            System.out.println("rooms table created.");
             
-	         // Check if room 101 and 102 already exist
-            if (!roomExists(101)) {
-                addRoom(101, 2, "Queen", true, true);
+            if (countRooms() < 2) {
+                addRoom(101, 2, "Queen", true, true, 120.00);
+                addRoom(102, 1, "King", false, true, 150.00);
+                System.out.println("Dummy rooms successfully added.");
+            } else {
+                System.out.println("Dummy rooms already present.");
             }
-            if (!roomExists(102)) {
-                addRoom(102, 1, "King", false, true);
-            }
+         
         } catch (SQLException e) {
-            System.out.println("Failed to create rooms table: " + e.getMessage());
+            System.out.println("failed to create rooms table: " + e.getMessage());
         }
     }
+    
+    private int countRooms() {
+        String sql = "SELECT COUNT(*) AS total FROM rooms";
+        try (Connection conn = this.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt("total");
+            }
+        } catch (SQLException e) {
+            System.out.println("Error counting rooms: " + e.getMessage());
+        }
+        return 0;
+    }
+
+
 
 
     
@@ -200,8 +221,8 @@ public class DatabaseModel {
         return false;
     }
     
-    public boolean addRoom(int roomNumber, int bedNumber, String bedSize, boolean hasBalcony, boolean nonsmoking) {
-        String sql = "INSERT INTO rooms (roomNumber, bedNumber, bedSize, hasBalcony, nonsmoking) VALUES (?, ?, ?, ?, ?)";
+    public boolean addRoom(int roomNumber, int bedNumber, String bedSize, boolean hasBalcony, boolean nonsmoking, double price) {
+        String sql = "INSERT INTO rooms (roomNumber, bedNumber, bedSize, hasBalcony, nonsmoking, price) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection conn = this.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, roomNumber);
@@ -209,6 +230,7 @@ public class DatabaseModel {
             pstmt.setString(3, bedSize);
             pstmt.setBoolean(4, hasBalcony);
             pstmt.setBoolean(5, nonsmoking);
+            pstmt.setDouble(6, price);
             int affectedRows = pstmt.executeUpdate();
             if (affectedRows == 1) {
                 System.out.println("Room " + roomNumber + " added successfully.");
@@ -221,8 +243,9 @@ public class DatabaseModel {
     }
 
 
-    public boolean addAccount(String firstName, String lastName, String email, String password, boolean isAdmin) {
-        String sql = "INSERT INTO accounts(firstName, lastName, email, password, isAdmin) VALUES(?,?,?,?,?)";
+
+    public boolean addAccount(String firstName, String lastName, String email, String password, boolean isAdmin, String cardNumber, String cardExpiration, String cardCCV) {
+        String sql = "INSERT INTO accounts(firstName, lastName, email, password, isAdmin, cardNumber, cardExpiration, cardCCV) VALUES(?,?,?,?,?,?,?,?)";
 
         try (Connection conn = this.connect();
              PreparedStatement statement = conn.prepareStatement(sql)) {
@@ -232,9 +255,12 @@ public class DatabaseModel {
             statement.setString(3, email);
             statement.setString(4, password);
             statement.setBoolean(5, isAdmin);
+            statement.setString(6, cardNumber);
+            statement.setString(7, cardExpiration);
+            statement.setString(8, cardCCV);
 
             int affectedRows = statement.executeUpdate();
-            return affectedRows == 1; // Return true if one row was inserted
+            return affectedRows == 1; //return true if inserted
         } catch (SQLException e) {
             System.out.println(e.getMessage());
             return false;
@@ -283,14 +309,6 @@ public class DatabaseModel {
 
     public static void main(String[] args) {
         DatabaseModel dbModel = new DatabaseModel();
-        
-        //for testung, add an account
-        boolean isAdded = dbModel.addAccount("John", "Doe", "johndoe@gmail.com", "password", false);
-        if (isAdded) {
-            System.out.println("Account successfully added.");
-        } else {
-            System.out.println("Failed to add account.");
-        }
     }
 
 
@@ -404,6 +422,23 @@ public class DatabaseModel {
 	    }
 	    return null;
 	}
+	
+	public boolean hasCardInfo(String email) {
+	    String sql = "SELECT cardNumber FROM accounts WHERE email = ? AND cardNumber IS NOT NULL AND cardNumber != ''";
+
+	    try (Connection conn = this.connect();
+	         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+	        pstmt.setString(1, email);
+	        try (ResultSet rs = pstmt.executeQuery()) {
+	            
+	            return rs.next();
+	        }
+	    } catch (SQLException e) {
+	        System.out.println("check card info error: " + e.getMessage());
+	    }
+	    return false;
+	}
+
 
 
 }
