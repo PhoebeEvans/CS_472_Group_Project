@@ -24,11 +24,13 @@ public class Room {
     public List<ReservationDate> getReservationDates(){return _reservationDates;}
     public double getCost(){return _cost;}
     public int getSleepCount(){return _sleepCount;}
+    
         
     // setters
     public void setType(String type){this._type = type;}
     public void setReservationDates(List<ReservationDate> reservationDates){this._reservationDates = reservationDates;}
     public void setCost(double cost){this._cost = cost;}
     public void setSleepCount(int sleepCount){this._sleepCount = sleepCount;}
+   
 }
 

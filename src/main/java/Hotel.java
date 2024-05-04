@@ -1,4 +1,4 @@
-import java.util.Scanner;
+import java.util.List;
 
 /**
  *
@@ -11,8 +11,7 @@ public class Hotel{
     private final String hotelName;
     private final String hotelAddress;
     private final String hotelPhoneNumber;
-    protected Rooms[] roomsList; //maintains an account of the clinics financial records
-    protected Reservation[] reservationsList; //a list that contains all animals seen at the clinic
+    protected List<Room> roomsList; //maintains an account of the hotels rooms list
     
     
     /**
@@ -25,8 +24,55 @@ public class Hotel{
         this.hotelName = name;
         this.hotelAddress = address;
         this.hotelPhoneNumber = phoneNumber;
-        reservationsList = new Reservation[]();
-        roomsList = new Rooms[]();
+        roomsList = ReserveRoom.generateRooms();
     }
+
+
+	/**
+	 * @return the hotelName
+	 */
+	public String getHotelName() {
+		return hotelName;
+	}
+
+
+	/**
+	 * @return the hotelAddress
+	 */
+	public String getHotelAddress() {
+		return hotelAddress;
+	}
+
+
+	/**
+	 * @return the hotelPhoneNumber
+	 */
+	public String getHotelPhoneNumber() {
+		return hotelPhoneNumber;
+	}
+	
+	
+	public void manageRooms() {
+		
+	}
     
+	
+	public void searchAvailableRooms() {
+		
+	}
+	
+	
+	public void createReservation() {
+		
+	}
+	
+	
+	public void manageReservation() {
+		
+	}
+	
+	
+	public void cancelReservation() {
+		
+	}
 }
