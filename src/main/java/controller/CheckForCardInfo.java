@@ -1,6 +1,7 @@
 package controller;
 
 import javax.servlet.*;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 
 import model.DatabaseModel;
@@ -8,6 +9,7 @@ import model.DatabaseModel;
 import java.io.IOException;
 import java.sql.*;
 
+@WebServlet("/CheckForCardInfo")
 public class CheckForCardInfo extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

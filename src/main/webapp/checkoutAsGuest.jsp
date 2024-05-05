@@ -22,7 +22,7 @@
             <section class="wrapper style5">
                 <div class="inner">
                     <section>
-                        <h3>Checkout as Administrator</h3>
+                        <h3>Guest Checkout</h3>
                         <div id="cartDetails"></div> <!-- Cart details will be displayed here -->
 
                         <h4>Enter Customer Information</h4>
@@ -32,11 +32,19 @@
                                     <input type="email" name="customerEmail" id="customerEmail" placeholder="Customer Email" required />
                                 </div>
                                 <div class="col-12" id="cardInfo" style="display: none;">
-                                	<h6>Card information not on file. please enter below</h6>
-                                    <input type="text" name="cardNumber" id="cardNumber" placeholder="Card Number" />
-                                    <input type="text" name="expirationDate" id="expirationDate" placeholder="Expiration Date (MM/YYYY)" />
-                                    <input type="text" name="ccv" id="ccv" placeholder="CCV" />
-                                </div>
+								    <h6>Card information not on file. Please enter below:</h6>
+								    <input type="text" name="cardNumber" id="cardNumber" placeholder="Card Number" />
+								    <input type="text" name="expirationDate" id="expirationDate" placeholder="Expiration Date (MM/YYYY)" />
+								    <input type="text" name="ccv" id="ccv" placeholder="CCV" />
+								    <div>
+								        <input type="radio" name="saveCardOption" id="saveCardYes" value="yes">
+								        <label for="saveCardYes">Yes, save my card information.</label>
+								        <input type="radio" name="saveCardOption" id="saveCardNo" value="no" checked>
+								        <label for="saveCardNo">No, do not save.</label>
+								    </div>
+								</div>
+
+
                                 <!-- cart details -->
                                 <input type="hidden" name="totalAmount" id="totalAmount" value="" />
                                 <input type="hidden" name="startDate" id="startDate" value="" />
@@ -46,7 +54,7 @@
                                 <div class="col-12">
                                     <ul class="actions">
                                         <li><input type="button" value="Checkout" class="primary" onclick="checkCardInfo()" /></li>
-                                        <li><a href="employeePage.jsp" class="button">Cancel</a></li>
+                                        <li><a href="index.jsp" class="button">Cancel</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -58,53 +66,45 @@
 
         <footer id="footer">...</footer>
     </div>
-    <script>
-    function loadCartDetails() {
-        const cartDetails = document.getElementById('cartDetails');
-        const cart = JSON.parse(localStorage.getItem('cart')) || [];
-        console.log('Cart:', cart);  // debug
-        cart.forEach(item => {
-            console.log('room no:', item.roomNumber);
-        });
-        let html = '<h4>Your Cart</h4>';
-        let firstItem = cart[0];
-        let grandTotal = 0;
-        if (cart.length > 0) {
-            cart.forEach((item) => {
-            	const roomNumber = item.roomNumber;
-                const price = item.price;
-                const checkInDate = item.checkInDate;
-                const checkOutDate = item.checkOutDate;
-                const nights = item.nights;
-                const totalPrice = item.totalPrice;
-                grandTotal += totalPrice;
-                
-                console.log('roomNumber Var: ', (item.roomNumber).toString());
 
-                html += '<p>Room Number: ' + roomNumber + ' - $' + price + ' per night</p>' +
-                '<p>Check-in: ' + checkInDate + ', Check-out: ' + checkOutDate + '</p>' +
-                '<p>Nights: ' + nights + '</p>'
-                '<p>Total: ' + totalPrice + '</p>'
-                '<hr>';
-            });
-            
-            html += '<hr>' +
-            		'<h4>Grand total: $' + grandTotal + '</h4>' + '<hr>';
-            		
-            //add cart deets to session
-            document.getElementById('totalAmount').value = grandTotal;
-            document.getElementById('startDate').value = firstItem ? firstItem.checkInDate : '';
-            document.getElementById('endDate').value = firstItem ? firstItem.checkOutDate : '';
-            document.getElementById('roomNumber').value = firstItem ? firstItem.roomNumber : '';
-            document.getElementById('specialRequest').value = "Any specific requests here"; 
-            
-        } else {
-            html += '<p>Your cart is empty.</p>';
+    <script>
+        function loadCartDetails() {
+            const cartDetails = document.getElementById('cartDetails');
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            console.log('Cart:', cart);  // debug
+            let html = '<h4>Your Cart</h4>';
+            let grandTotal = 0;
+            if (cart.length > 0) {
+                cart.forEach((item) => {
+                    const roomNumber = item.roomNumber;
+                    const price = item.price;
+                    const checkInDate = item.checkInDate;
+                    const checkOutDate = item.checkOutDate;
+                    const nights = item.nights;
+                    const totalPrice = item.totalPrice;
+                    grandTotal += totalPrice;
+                    
+                    html += '<p>Room Number: ' + roomNumber + ' - $' + price + ' per night</p>' +
+                    '<p>Check-in: ' + checkInDate + ', Check-out: ' + checkOutDate + '</p>' +
+                    '<p>Nights: ' + nights + '</p>' +
+                    '<p>Total: ' + totalPrice + '</p>' +
+                    '<hr>';
+                });
+                
+                html += '<h4>Grand total: $' + grandTotal + '</h4>';
+                
+              //add cart deets to session
+                document.getElementById('totalAmount').value = grandTotal;
+                document.getElementById('startDate').value = cart[0].checkInDate;
+                document.getElementById('endDate').value = cart[0].checkOutDate;
+                document.getElementById('roomNumber').value = cart[0].roomNumber;
+                document.getElementById('specialRequest').value = "Any specific requests here";
+            } else {
+                html += '<p>Your cart is empty.</p>';
+            }
+            cartDetails.innerHTML = html;
         }
-        console.log('HTML:', html); // debug
-        cartDetails.innerHTML = html;
-    }
-    
+        
         function checkCardInfo() {
             var email = document.getElementById('customerEmail').value;
             if (!email) {
@@ -142,6 +142,20 @@
             };
         }
 
+        function submitForm() {
+            var saveCardOption = document.querySelector('input[name="saveCardOption"]:checked').value;
+            var form = document.getElementById('checkoutForm');
+            if (saveCardOption === 'yes') {
+                
+                var input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'saveCard';
+                input.value = 'true';
+                form.appendChild(input);
+            }
+            form.submit();
+        }
+
         function validateCardInputs() {
             var cardNumber = document.getElementById('cardNumber').value;
             var expirationDate = document.getElementById('expirationDate').value;
@@ -149,9 +163,7 @@
             return cardNumber && expirationDate && ccv;
         }
 
-        function submitForm() {
-            document.getElementById('checkoutForm').submit();
-        }
+
         
         document.addEventListener('DOMContentLoaded', function() {
             loadCartDetails();

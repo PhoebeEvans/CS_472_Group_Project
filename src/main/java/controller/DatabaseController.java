@@ -50,6 +50,13 @@ public class DatabaseController extends HttpServlet {
                 request.getSession().setAttribute("lastName", lastName);
                 request.getSession().setAttribute("email", email);
                 request.getSession().setAttribute("isAdmin", strIsAdmin);
+                boolean hasCardInfo = dbModel.hasCardInfo(email);
+                request.getSession().setAttribute("hasCardInfo", hasCardInfo);
+                System.out.println("User has card info in session attr: " + hasCardInfo);
+                
+                if(hasCardInfo) {
+                	request.getSession().setAttribute("lastFourCC", dbModel.getCardLastFour(email));
+                }
                 
                 //logging
                 System.out.println("Session attribute set for firstName: " + firstName);

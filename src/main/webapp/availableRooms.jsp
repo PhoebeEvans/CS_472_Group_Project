@@ -23,6 +23,7 @@
             <section class="wrapper style5">
                 <div class="inner">
                     <h2>Available Rooms</h2>
+                    <h4><%= request.getParameter("checkInDate") + " to " + request.getParameter("checkOutDate") %></h4>
                   
 
                     <table>

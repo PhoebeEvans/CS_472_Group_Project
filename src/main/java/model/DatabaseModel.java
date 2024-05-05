@@ -7,6 +7,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class DatabaseModel {
 
@@ -438,7 +443,90 @@ public class DatabaseModel {
 	    }
 	    return false;
 	}
+	
+	//get the id of last reservation for receipt purposes
+	public int getLastReservationID() {
+	    String sql = "SELECT MAX(reservationID) AS lastID FROM reservations";
+	    try (Connection conn = this.connect();
+	         Statement stmt = conn.createStatement();
+	         ResultSet rs = stmt.executeQuery(sql)) {
+	        if (rs.next()) {
+	            return rs.getInt("lastID");
+	        }
+	    } catch (SQLException e) {
+	        System.out.println("Error fetching last reservation ID: " + e.getMessage());
+	    }
+	    return -1; // error retrieving
+	}
+	
+	public boolean saveCardInfo(String email, String cardNumber, String cardExpiration, String cardCCV, boolean userIsUpdatingInfo) {
+	    // check if cc exists for checkout reasons, or if user is purposely wanting to update info
+	    if (!hasCardInfo(email) || userIsUpdatingInfo) {
+	        String sql = "UPDATE accounts SET cardNumber = ?, cardExpiration = ?, cardCCV = ? WHERE email = ?";
 
+	        try (Connection conn = this.connect();
+	             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+	            pstmt.setString(1, cardNumber);
+	            pstmt.setString(2, cardExpiration);
+	            pstmt.setString(3, cardCCV);
+	            pstmt.setString(4, email);
+
+	            int affectedRows = pstmt.executeUpdate();
+	            System.out.println("Card was successfully added: " + cardNumber);
+	            return affectedRows == 1; //true if success
+	        } catch (SQLException e) {
+	            System.out.println("Failed to save card info: " + e.getMessage());
+	        }
+	    }
+	    return false; //false if no success
+	    
+	}
+
+	public String getCardLastFour(String email) {
+	    String sql = "SELECT cardNumber FROM accounts WHERE email = ? AND cardNumber IS NOT NULL";
+	    try (Connection conn = this.connect();
+	         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+	        pstmt.setString(1, email);
+	        ResultSet rs = pstmt.executeQuery();
+	        if (rs.next()) {
+	            String cardNumber = rs.getString("cardNumber");
+	            if (cardNumber != null && cardNumber.length() >= 4) {
+	                return cardNumber.substring(cardNumber.length() - 4);
+	            }
+	        }
+	    } catch (SQLException e) {
+	        System.out.println("Failed to get last four CC numbers: " + e.getMessage());
+	    }
+	    return null; // err
+	}
+
+
+	public List<Map<String, String>> getReservationsByGuest(String email, boolean isFuture) {
+	    List<Map<String, String>> reservations = new ArrayList<>();
+	    String currentDate = LocalDate.now().toString(); // Get todays date
+	    String sql = isFuture ?
+	        "SELECT * FROM reservations WHERE guest = ? AND startDate >= ? ORDER BY startDate ASC" :
+	        "SELECT * FROM reservations WHERE guest = ? AND startDate < ? ORDER BY startDate DESC";
+
+	    try (Connection conn = this.connect();
+	         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+	        pstmt.setString(1, email);
+	        pstmt.setString(2, currentDate);
+	        try (ResultSet rs = pstmt.executeQuery()) {
+	            while (rs.next()) {
+	                Map<String, String> reservation = new HashMap<>();
+	                reservation.put("reservationID", String.valueOf(rs.getInt("reservationID")));
+	                reservation.put("startDate", rs.getString("startDate"));
+	                reservation.put("endDate", rs.getString("endDate"));
+	                reservation.put("roomNumber", String.valueOf(rs.getInt("roomNumber")));
+	                reservations.add(reservation);
+	            }
+	        }
+	    } catch (SQLException e) {
+	        System.err.println("Error fetching reservations: " + e.getMessage());
+	    }
+	    return reservations;
+	}
 
 
 }

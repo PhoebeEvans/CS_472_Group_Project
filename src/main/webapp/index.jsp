@@ -40,7 +40,8 @@
 		                                    <% } %>
 											<li><a href="index.jsp">Home</a></li>
 											<li><a href="generic.html">Amenities</a></li>
-											<li><a href="elements.html">Reserve a Room</a></li>
+											<li><a href="chooseRoomsAsGuest.jsp">Reserve a Room</a></li>
+											<li><a href="ViewReservations">Your Reservations</a></li>
 											<% if (session.getAttribute("firstName") != null) { %>
 												<li><a href="editProfile.jsp">Edit Profile</a></li>
                                       	 		<li><a href="AccountServlet?action=logout">Sign Out</a></li>
@@ -61,7 +62,7 @@
 							<p>Get away from it all.<br />
 							Enjoy the stay.</p>
 							<ul class="actions special">
-								<li><a href="#" class="button primary">Reserve a room</a></li>
+								<li><a href="chooseRoomsAsGuest.jsp" class="button primary">Reserve a room</a></li>
 							</ul>
 						</div>
 						<a href="#one" class="more scrolly">Learn More</a>
@@ -157,16 +158,7 @@
 
 				<!-- Footer -->
 					<footer id="footer">
-						<ul class="icons">
-							<li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
-							<li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
-							<li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
-							<li><a href="#" class="icon brands fa-dribbble"><span class="label">Dribbble</span></a></li>
-							<li><a href="#" class="icon solid fa-envelope"><span class="label">Email</span></a></li>
-						</ul>
-						<ul class="copyright">
-							<li>&copy; Untitled</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
-						</ul>
+						...
 					</footer>
 
 			</div>

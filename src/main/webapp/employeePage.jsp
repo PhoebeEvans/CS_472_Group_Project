@@ -101,6 +101,7 @@
 					<h3>Check Room Availability</h3>
 						<p>Check how many rooms are available within a selected date range.</p>
 						<form method="post" action="CheckRoomAvailabilityServlet" class="grid">
+							<input type="hidden" name="origin" value="admin" />
 						    <div class="row gtr-uniform">
 						        <div class="col-3">
 						            <label for="checkInDate">Check-In Date:</label>
