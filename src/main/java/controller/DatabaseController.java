@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 
 @WebServlet("/AccountServlet")
 public class DatabaseController extends HttpServlet {
@@ -31,7 +32,13 @@ public class DatabaseController extends HttpServlet {
             String password = request.getParameter("password");
 
             // Check credentials with database
-            boolean isValidUser = dbModel.checkCredentials(email, password);
+            boolean isValidUser = false;
+			try {
+				isValidUser = dbModel.checkCredentials(email, password);
+			} catch (NoSuchAlgorithmException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
             System.out.println("Credentials valid: " + isValidUser); //logging
 
             if (isValidUser) {
@@ -83,7 +90,13 @@ public class DatabaseController extends HttpServlet {
             boolean isAdmin = false; // Or you can take this as a parameter from the form if needed.
 
             // Attempt to add the account
-            boolean accountCreated = dbModel.addAccount(firstName, lastName, email, password, isAdmin, null, null, null);
+            boolean accountCreated = false;
+			try {
+				accountCreated = dbModel.addAccount(firstName, lastName, email, password, isAdmin, null, null, null);
+			} catch (NoSuchAlgorithmException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 
             // Check if account creation was successful
             if (accountCreated) {
@@ -121,17 +134,27 @@ public class DatabaseController extends HttpServlet {
         	String adminEmail = request.getParameter("adminEmail");
             String adminPassword = request.getParameter("adminPassword");
             
-            if (dbModel.checkCredentials(adminEmail, adminPassword)) {
-            	handleUpdateOtherUser(request, response);
-            } else {
-                // Admin credentials are not valid
-                response.sendRedirect("badCredentials.jsp?referrer=editProfileAsAdmin.jsp");
-            }
+            try {
+				if (dbModel.checkCredentials(adminEmail, adminPassword)) {
+					handleUpdateOtherUser(request, response);
+				} else {
+				    // Admin credentials are not valid
+				    response.sendRedirect("badCredentials.jsp?referrer=editProfileAsAdmin.jsp");
+				}
+			} catch (NoSuchAlgorithmException | IOException | ServletException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
             
         }
         
         else if ("updateProfile".equals(action)) {
-            handleProfileUpdate(request, response);
+            try {
+				handleProfileUpdate(request, response);
+			} catch (NoSuchAlgorithmException | IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
         }
         
         else {
@@ -174,7 +197,7 @@ public class DatabaseController extends HttpServlet {
         }
     }
     
-    private void handleUpdateOtherUser(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+    private void handleUpdateOtherUser(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException, NoSuchAlgorithmException {
         HttpSession session = request.getSession();
         String adminEmail = request.getParameter("adminEmail");
         String adminPassword = request.getParameter("adminPassword");
@@ -206,7 +229,7 @@ public class DatabaseController extends HttpServlet {
         }
     }
     
-    private void handleProfileUpdate(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    private void handleProfileUpdate(HttpServletRequest request, HttpServletResponse response) throws IOException, NoSuchAlgorithmException {
         String email = request.getParameter("email");
         String oldPassword = request.getParameter("oldPassword");
         String newPassword = request.getParameter("newPassword");

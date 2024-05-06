@@ -91,7 +91,7 @@
                     '<hr>';
                 });
                 
-                html += '<h4>Grand total: $' + grandTotal + '</h4>';
+                html += '<h4>Grand total: $' + grandTotal + '</h4>' + '<h6>Coupons will automatically apply if available</h6>' + '<hr>';;
                 
               //add cart deets to session
                 document.getElementById('totalAmount').value = grandTotal;

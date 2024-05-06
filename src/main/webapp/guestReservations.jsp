@@ -9,6 +9,19 @@
     <link rel="stylesheet" href="assets/css/main.css" />
     <noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
     <script src="assets/js/jquery.min.js"></script>
+    <style>
+        .col-6 {
+            padding-right: 20px; /* Adds padding to the right of each column for separation */
+        }
+        .col-6:last-child {
+            padding-right: 0; /* Removes padding from the last column */
+        }
+        table {
+            width: 100%; /* Ensures table uses full width of the column */
+            border-collapse: separate; 
+            border-spacing: 0 10px; /* Adds space between rows */
+        }
+    </style>
 </head>
 <body class="is-preload">
     <!-- Page Wrapper -->
@@ -22,11 +35,18 @@
         <article id="main">
             <section class="wrapper style5">
                 <div class="inner">
+                	<h2>Loyalty Coupons</h2>
+                	<h6>Every $500 towards reservations earns a $100 off coupon!</h6>
+                	<h5>Amount needed for next coupon:</h5>
+                	<p>$<%= request.getAttribute("amountNeeded") %></p>
+                	<h5>Available Coupons:</h5>
+                	<p><%= request.getAttribute("availableCoupons") %></p>
+                	<hr>
                     <h2>Your Reservations</h2>
                     <hr>
                     <div class="row gtr-uniform">
                         <!-- Future Reservations -->
-                        <div class="col-6">
+                        <div class="col-12">
                             <h3>Future Reservations</h3>
                             <table>
                                 <thead>
@@ -35,7 +55,7 @@
                                         <th>Start Date</th>
                                         <th>End Date</th>
                                         <th>Room Number</th>
-                                        <th>Cancel</th>
+                                        <th></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -54,9 +74,13 @@
                                 </tbody>
                             </table>
                         </div>
+                        
+                        <div><hr></div>
+                        
 
                         <!-- Past Reservations -->
-                        <div class="col-6">
+                        <div class="col-12">
+                        	<hr>
                             <h3>Past Reservations</h3>
                             <table>
                                 <thead>

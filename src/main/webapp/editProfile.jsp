@@ -73,11 +73,6 @@
                                     <input type="email" name="email" id="email" value="<%= session.getAttribute("email") %>" placeholder="Email" />
                                 </div>
                                 <div class="col-12">
-                                    <label>Old Password (Required)</label>
-                                    <input type="password" name="oldPassword" id="oldPassword" value="" placeholder="Old Password" />
-                                </div>
-                                <!-- Credit Card Update Button -->
-                                <div class="col-12">
 								    <% if (session.getAttribute("hasCardInfo") != null && (Boolean) session.getAttribute("hasCardInfo")) { %>
 								        <button type="button" onclick="location.href='manageCardDetails.jsp';">Update Card on File?</button>
 								    <% } else { %>
@@ -88,7 +83,10 @@
                                     <label>New Password</label>
                                     <input type="password" name="newPassword" id="newPassword" value="" placeholder="New Password" />
                                 </div>
-                                <!-- Hidden input field for action -->
+                                <div class="col-12">
+                                    <label>Old Password (Required)</label>
+                                    <input type="password" name="oldPassword" id="oldPassword" value="" placeholder="Old Password" />
+                                </div>
                                 <div class="col-12">
                                     <input type="hidden" name="action" value="updateProfile" />
                                 </div>

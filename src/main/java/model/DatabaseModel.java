@@ -1,5 +1,6 @@
 package model;
 
+import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
@@ -12,6 +13,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import controller.EncryptionUtils;
+import controller.InfoHasher;
 
 public class DatabaseModel {
 
@@ -55,26 +59,29 @@ public class DatabaseModel {
 
 
     public void createAccountsTable() {
-        String sql = "CREATE TABLE IF NOT EXISTS accounts ("
-                + " id integer PRIMARY KEY AUTOINCREMENT,"
-                + " firstName text NOT NULL,"
-                + " lastName text NOT NULL,"
-                + " email text NOT NULL UNIQUE,"
-                + " password text NOT NULL,"
-                + " isAdmin boolean NOT NULL,"
-                + " cardNumber text," //cc info can be null
-                + " cardExpiration text," 
-                + " cardCCV text" 
-                + ");";
+        String sql = "CREATE TABLE IF NOT EXISTS accounts (" +
+            "id integer PRIMARY KEY AUTOINCREMENT," +
+            "firstName text NOT NULL," +
+            "lastName text NOT NULL," +
+            "email text NOT NULL UNIQUE," +
+            "password text NOT NULL," +
+            "isAdmin boolean NOT NULL," +
+            "cardNumber text," +
+            "cardExpiration text," +
+            "cardCCV text," +
+            "totalSpent DECIMAL(10, 2) DEFAULT 0," +
+            "couponsRedeemed INTEGER DEFAULT 0" +
+            ");";
 
         try (Connection conn = this.connect();
              Statement stmt = conn.createStatement()) {
             stmt.execute(sql);
-            System.out.println("The accounts table has been created with credit card fields.");
+            System.out.println("The accounts table has been created with new loyalty fields.");
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
     }
+
     
     public void createReservationsTable() {
         String sql = "CREATE TABLE IF NOT EXISTS reservations ("
@@ -249,46 +256,96 @@ public class DatabaseModel {
 
 
 
-    public boolean addAccount(String firstName, String lastName, String email, String password, boolean isAdmin, String cardNumber, String cardExpiration, String cardCCV) {
-        String sql = "INSERT INTO accounts(firstName, lastName, email, password, isAdmin, cardNumber, cardExpiration, cardCCV) VALUES(?,?,?,?,?,?,?,?)";
-
-        try (Connection conn = this.connect();
-             PreparedStatement statement = conn.prepareStatement(sql)) {
-            // Set the parameters for the prepared statement
-            statement.setString(1, firstName);
-            statement.setString(2, lastName);
-            statement.setString(3, email);
-            statement.setString(4, password);
-            statement.setBoolean(5, isAdmin);
-            statement.setString(6, cardNumber);
-            statement.setString(7, cardExpiration);
-            statement.setString(8, cardCCV);
-
-            int affectedRows = statement.executeUpdate();
-            return affectedRows == 1; //return true if inserted
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-            return false;
-        }
-    }
-    
-    public boolean addTransaction(int reservationID, String email, double totalAmount, String startDate, String endDate) {
-        String sql = "INSERT INTO transactions(email, totalAmount, startDate, endDate, reservationID) VALUES(?,?,?,?,?)";
+    public boolean addAccount(String firstName, String lastName, String email, String password, boolean isAdmin, String cardNumber, String cardExpiration, String cardCCV) throws NoSuchAlgorithmException {
+        String sql = "INSERT INTO accounts (firstName, lastName, email, password, isAdmin, cardNumber, cardExpiration, cardCCV, totalSpent, couponsRedeemed) VALUES (?,?,?,?,?,?,?,?,0,0)";
 
         try (Connection conn = this.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-        	pstmt.setString(1, email);      
-            pstmt.setDouble(2, totalAmount);  
-            pstmt.setString(3, startDate);  
-            pstmt.setString(4, endDate);      
-            pstmt.setInt(5, reservationID);   
+        	
+        	String hashedPassword = InfoHasher.hashInfo(password);
+        	
+            pstmt.setString(1, firstName);
+            pstmt.setString(2, lastName);
+            pstmt.setString(3, email);
+            pstmt.setString(4, hashedPassword);
+            pstmt.setBoolean(5, isAdmin);
+            pstmt.setString(6, cardNumber);
+            pstmt.setString(7, cardExpiration);
+            pstmt.setString(8, cardCCV);
 
             int affectedRows = pstmt.executeUpdate();
-            System.out.println("Added new transaction from email: " + email); //debug
-            return affectedRows == 1;
+            return affectedRows == 1; //return true if success
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            System.out.println("Failed to add new account: " + e.getMessage());
             return false;
+        }
+    }
+
+    
+    public boolean addTransaction(int reservationID, String email, double totalAmount, String startDate, String endDate) {
+        Connection conn = this.connect();
+        try {
+            //begin transaction 
+            conn.setAutoCommit(false);
+
+            //get total spent and coupons redeemed amount
+            String fetchAccount = "SELECT totalSpent, couponsRedeemed FROM accounts WHERE email = ?";
+            double newTotalSpent;
+            int newCouponsRedeemed;
+            try (PreparedStatement pstmtFetch = conn.prepareStatement(fetchAccount)) {
+                pstmtFetch.setString(1, email);
+                ResultSet rs = pstmtFetch.executeQuery();
+                if (!rs.next()) return false; //err
+                double currentTotalSpent = rs.getDouble("totalSpent");
+                int currentCouponsRedeemed = rs.getInt("couponsRedeemed");
+
+                //add to total spent
+                newTotalSpent = currentTotalSpent + totalAmount;
+                newCouponsRedeemed = currentCouponsRedeemed;
+
+                //check if coupons are redeemable
+                int couponsPossible = (int) (newTotalSpent / 500);
+                if (couponsPossible > currentCouponsRedeemed) {
+                    newCouponsRedeemed = couponsPossible;
+                    totalAmount -= (newCouponsRedeemed - currentCouponsRedeemed) * 100; // discount total with each available coupon
+                }
+            }
+
+            //update coupons and totalspent to account
+            String updateAccount = "UPDATE accounts SET totalSpent = ?, couponsRedeemed = ? WHERE email = ?";
+            try (PreparedStatement pstmtUpdate = conn.prepareStatement(updateAccount)) {
+                pstmtUpdate.setDouble(1, newTotalSpent);
+                pstmtUpdate.setInt(2, newCouponsRedeemed);
+                pstmtUpdate.setString(3, email);
+                pstmtUpdate.executeUpdate();
+            }
+
+            //add transaction with adjusted total spent
+            String sql = "INSERT INTO transactions (email, totalAmount, startDate, endDate, reservationID) VALUES (?,?,?,?,?)";
+            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                pstmt.setString(1, email);
+                pstmt.setDouble(2, totalAmount);
+                pstmt.setString(3, startDate);
+                pstmt.setString(4, endDate);
+                pstmt.setInt(5, reservationID);
+                int affectedRows = pstmt.executeUpdate();
+                conn.commit(); //commit transactions
+                return affectedRows == 1;
+            }
+        } catch (SQLException e) {
+            System.out.println("Transaction failed: " + e.getMessage());
+            try {
+                if (conn != null) conn.rollback();
+            } catch (SQLException ex) {
+                System.out.println("Rollback failed: " + ex.getMessage());
+            }
+            return false;
+        } finally {
+            try {
+                if (conn != null) conn.setAutoCommit(true); //back to auto commit after transaction commiited
+            } catch (SQLException e) {
+                System.out.println("Error resetting auto-commit: " + e.getMessage());
+            }
         }
     }
     
@@ -312,13 +369,16 @@ public class DatabaseModel {
 
 
 
+
     public static void main(String[] args) {
         DatabaseModel dbModel = new DatabaseModel();
     }
 
 
-    public boolean checkCredentials(String email, String password) {
+    public boolean checkCredentials(String email, String password) throws NoSuchAlgorithmException {
         String sql = "SELECT id FROM accounts WHERE email = ? AND password = ?";
+        
+        String hashedPassword = InfoHasher.hashInfo(password);
         
         System.out.println("DB MODEL credentials check: " + email + " " + password);
 
@@ -326,9 +386,9 @@ public class DatabaseModel {
              PreparedStatement statement = conn.prepareStatement(sql)) {
 
             statement.setString(1, email);
-            statement.setString(2, password);
+            statement.setString(2, hashedPassword);
 
-            return statement.executeQuery().next(); // If there is a result, credentials are valid
+            return statement.executeQuery().next(); // if result, credentials valid
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -394,13 +454,16 @@ public class DatabaseModel {
         return null;
 	}
 	
-	public boolean updateProfile(String email, String firstName, String lastName, String newPassword, boolean isAdmin) {
+	public boolean updateProfile(String email, String firstName, String lastName, String newPassword, boolean isAdmin) throws NoSuchAlgorithmException {
 	    String sql = "UPDATE accounts SET firstName = ?, lastName = ?, password = ?, isAdmin = ? WHERE email = ?";
+	    
+	    String hashedPassword = InfoHasher.hashInfo(newPassword);
+	    
 	    try (Connection conn = this.connect();
 	         PreparedStatement stmt = conn.prepareStatement(sql)) {
 	        stmt.setString(1, firstName);
 	        stmt.setString(2, lastName);
-	        stmt.setString(3, newPassword.isEmpty() ? getPasswordByEmail(email) : newPassword);
+	        stmt.setString(3, newPassword.isEmpty() ? getPasswordByEmail(email) : hashedPassword);
 	        stmt.setBoolean(4, isAdmin);
 	        stmt.setString(5, email);
 
@@ -461,44 +524,50 @@ public class DatabaseModel {
 	
 	public boolean saveCardInfo(String email, String cardNumber, String cardExpiration, String cardCCV, boolean userIsUpdatingInfo) {
 	    // check if cc exists for checkout reasons, or if user is purposely wanting to update info
-	    if (!hasCardInfo(email) || userIsUpdatingInfo) {
-	        String sql = "UPDATE accounts SET cardNumber = ?, cardExpiration = ?, cardCCV = ? WHERE email = ?";
+		try {
+            String encryptedCardNumber = EncryptionUtils.encrypt(cardNumber, "AES"); 
+            String encryptedCardExpiration = EncryptionUtils.encrypt(cardExpiration, "AES");
+            String encryptedCCV = EncryptionUtils.encrypt(cardCCV, "AES"); 
 
-	        try (Connection conn = this.connect();
-	             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-	            pstmt.setString(1, cardNumber);
-	            pstmt.setString(2, cardExpiration);
-	            pstmt.setString(3, cardCCV);
-	            pstmt.setString(4, email);
+            String sql = "UPDATE accounts SET cardNumber = ?, cardExpiration = ?, cardCCV = ? WHERE email = ?";
+            try (Connection conn = this.connect();
+                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                pstmt.setString(1, encryptedCardNumber);
+                pstmt.setString(2, encryptedCardExpiration);
+                pstmt.setString(3, encryptedCCV);
+                pstmt.setString(4, email);
 
-	            int affectedRows = pstmt.executeUpdate();
-	            System.out.println("Card was successfully added: " + cardNumber);
-	            return affectedRows == 1; //true if success
-	        } catch (SQLException e) {
-	            System.out.println("Failed to save card info: " + e.getMessage());
-	        }
-	    }
-	    return false; //false if no success
+                int affectedRows = pstmt.executeUpdate();
+                return affectedRows == 1;
+            }
+        } catch (Exception e) {
+            System.out.println("Encryption or database error: " + e.getMessage());
+            return false;
+        }
 	    
 	}
 
 	public String getCardLastFour(String email) {
-	    String sql = "SELECT cardNumber FROM accounts WHERE email = ? AND cardNumber IS NOT NULL";
-	    try (Connection conn = this.connect();
-	         PreparedStatement pstmt = conn.prepareStatement(sql)) {
-	        pstmt.setString(1, email);
-	        ResultSet rs = pstmt.executeQuery();
-	        if (rs.next()) {
-	            String cardNumber = rs.getString("cardNumber");
-	            if (cardNumber != null && cardNumber.length() >= 4) {
-	                return cardNumber.substring(cardNumber.length() - 4);
-	            }
-	        }
-	    } catch (SQLException e) {
-	        System.out.println("Failed to get last four CC numbers: " + e.getMessage());
-	    }
-	    return null; // err
-	}
+        try {
+            String sql = "SELECT cardNumber FROM accounts WHERE email = ? AND cardNumber IS NOT NULL";
+            try (Connection conn = this.connect();
+                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                pstmt.setString(1, email);
+                ResultSet rs = pstmt.executeQuery();
+                if (rs.next()) {
+                    String encryptedCardNumber = rs.getString("cardNumber");
+                    String decryptedCardNumber = EncryptionUtils.decrypt(encryptedCardNumber, "AES");
+                    if (decryptedCardNumber != null && decryptedCardNumber.length() >= 4) {
+                    	System.out.println("Decrypted last four: " + decryptedCardNumber.substring(decryptedCardNumber.length() - 4));
+                        return decryptedCardNumber.substring(decryptedCardNumber.length() - 4);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Decryption or database error: " + e.getMessage());
+        }
+        return null; // In case of error or no data
+    }
 
 
 	public List<Map<String, String>> getReservationsByGuest(String email, boolean isFuture) {
@@ -527,6 +596,52 @@ public class DatabaseModel {
 	    }
 	    return reservations;
 	}
+	
+	public boolean deleteReservation(int reservationId) throws SQLException {
+	    String sql = "DELETE FROM reservations WHERE reservationID = ?";
+	    try (Connection conn = this.connect();
+	         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+	        pstmt.setInt(1, reservationId);
+	        int affectedRows = pstmt.executeUpdate();
+	        return affectedRows > 0;
+	    }
+	}
+
+	public Map<String, String> getTransactionDetailsByReservationId(int reservationId) throws SQLException {
+	    String sql = "SELECT * FROM transactions WHERE reservationID = ?";
+	    try (Connection conn = this.connect();
+	         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+	        pstmt.setInt(1, reservationId);
+	        ResultSet rs = pstmt.executeQuery();
+	        if (rs.next()) {
+	            Map<String, String> details = new HashMap<>();
+	            details.put("email", rs.getString("email"));
+	            details.put("totalAmount", rs.getString("totalAmount"));
+	            details.put("startDate", rs.getString("startDate"));
+	            details.put("endDate", rs.getString("endDate"));
+	            return details;
+	        }
+	        return null;
+	    }
+	}
+	
+	public Map<String, Double> getCouponDetails(String email) {
+	    Map<String, Double> details = new HashMap<>();
+	    String sql = "SELECT totalSpent, couponsRedeemed FROM accounts WHERE email = ?";
+	    try (Connection conn = this.connect();
+	         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+	        pstmt.setString(1, email);
+	        ResultSet rs = pstmt.executeQuery();
+	        if (rs.next()) {
+	            details.put("totalSpent", rs.getDouble("totalSpent"));
+	            details.put("couponsRedeemed", (double) rs.getInt("couponsRedeemed"));
+	        }
+	    } catch (SQLException e) {
+	        System.err.println("Error fetching coupon details: " + e.getMessage());
+	    }
+	    return details;
+	}
+
 
 
 }
