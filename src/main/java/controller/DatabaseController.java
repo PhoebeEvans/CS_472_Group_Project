@@ -50,6 +50,13 @@ public class DatabaseController extends HttpServlet {
                 request.getSession().setAttribute("lastName", lastName);
                 request.getSession().setAttribute("email", email);
                 request.getSession().setAttribute("isAdmin", strIsAdmin);
+                boolean hasCardInfo = dbModel.hasCardInfo(email);
+                request.getSession().setAttribute("hasCardInfo", hasCardInfo);
+                System.out.println("User has card info in session attr: " + hasCardInfo);
+                
+                if(hasCardInfo) {
+                	request.getSession().setAttribute("lastFourCC", dbModel.getCardLastFour(email));
+                }
                 
                 //logging
                 System.out.println("Session attribute set for firstName: " + firstName);
@@ -76,7 +83,7 @@ public class DatabaseController extends HttpServlet {
             boolean isAdmin = false; // Or you can take this as a parameter from the form if needed.
 
             // Attempt to add the account
-            boolean accountCreated = dbModel.addAccount(firstName, lastName, email, password, isAdmin);
+            boolean accountCreated = dbModel.addAccount(firstName, lastName, email, password, isAdmin, null, null, null);
 
             // Check if account creation was successful
             if (accountCreated) {
@@ -92,7 +99,7 @@ public class DatabaseController extends HttpServlet {
 
 
                 // Redirect to the home page
-                System.out.println("Redirecting to index.jsp"); // Log redirection
+                System.out.println("Redirecting to index.jsp"); // Log redirectionm
                 response.sendRedirect("index.jsp");
                 return;
             }

@@ -99,20 +99,28 @@
 					<hr />
 
 					<h3>Check Room Availability</h3>
-					<p>Check how many rooms are available on the selected day.</p>
-					<div class="form">
-                        <form class="grid">
-                        	<div class="row gtr-uniform">
-                        		<div class="col-6">
-						            <input type="date" id="searchDate" placeholder="Check In Date">
+						<p>Check how many rooms are available within a selected date range.</p>
+						<form method="post" action="CheckRoomAvailabilityServlet" class="grid">
+							<input type="hidden" name="origin" value="admin" />
+						    <div class="row gtr-uniform">
+						        <div class="col-3">
+						            <label for="checkInDate">Check-In Date:</label>
+						            <input type="date" id="checkInDate" name="checkInDate" placeholder="Check In Date" required>
 						        </div>
-                            	<div class="col-12">
-						            <input type="button" onclick="filterRooms()" class="primary" value="Check Availability"> <!-- Change to check availability -->
+						        <div class="col-3">
+						            <label for="checkOutDate">Check-Out Date:</label>
+						            <input type="date" id="checkOutDate" name="checkOutDate" placeholder="Check Out Date" required>
 						        </div>
-						     </div>
-                        </form>
-                    </div>
+						        <div class="col-12">
+						            <ul class="actions">
+						                <li><input type="submit" value="Check Availability" class="primary"></li>
+						            </ul>
+						        </div>
+						    </div>
+						</form>
+						
 					<hr />
+
 						
 					<h3>Access Accounts</h3>
 					<p>Enter in user's full name and email to access account.</p>

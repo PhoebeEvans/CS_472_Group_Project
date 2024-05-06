@@ -7,6 +7,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class DatabaseModel {
 
@@ -56,13 +61,16 @@ public class DatabaseModel {
                 + " lastName text NOT NULL,"
                 + " email text NOT NULL UNIQUE,"
                 + " password text NOT NULL,"
-                + " isAdmin boolean NOT NULL"
+                + " isAdmin boolean NOT NULL,"
+                + " cardNumber text," //cc info can be null
+                + " cardExpiration text," 
+                + " cardCCV text" 
                 + ");";
 
         try (Connection conn = this.connect();
              Statement stmt = conn.createStatement()) {
             stmt.execute(sql);
-            System.out.println("The accounts table has been created.");
+            System.out.println("The accounts table has been created with credit card fields.");
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -102,25 +110,43 @@ public class DatabaseModel {
                 + " bedNumber INTEGER NOT NULL,"
                 + " bedSize TEXT NOT NULL,"
                 + " hasBalcony BOOLEAN NOT NULL,"
-                + " nonsmoking BOOLEAN NOT NULL"
+                + " nonsmoking BOOLEAN NOT NULL,"
+                + " price DECIMAL(10, 2) NOT NULL" 
                 + ");";
 
         try (Connection conn = this.connect();
              Statement stmt = conn.createStatement()) {
             stmt.execute(sql);
-            System.out.println("The rooms table has been created.");
+            System.out.println("rooms table created.");
             
-	         // Check if room 101 and 102 already exist
-            if (!roomExists(101)) {
-                addRoom(101, 2, "Queen", true, true);
+            if (countRooms() < 2) {
+                addRoom(101, 2, "Queen", true, true, 120.00);
+                addRoom(102, 1, "King", false, true, 150.00);
+                System.out.println("Dummy rooms successfully added.");
+            } else {
+                System.out.println("Dummy rooms already present.");
             }
-            if (!roomExists(102)) {
-                addRoom(102, 1, "King", false, true);
-            }
+         
         } catch (SQLException e) {
-            System.out.println("Failed to create rooms table: " + e.getMessage());
+            System.out.println("failed to create rooms table: " + e.getMessage());
         }
     }
+    
+    private int countRooms() {
+        String sql = "SELECT COUNT(*) AS total FROM rooms";
+        try (Connection conn = this.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt("total");
+            }
+        } catch (SQLException e) {
+            System.out.println("Error counting rooms: " + e.getMessage());
+        }
+        return 0;
+    }
+
+
 
 
     
@@ -200,8 +226,8 @@ public class DatabaseModel {
         return false;
     }
     
-    public boolean addRoom(int roomNumber, int bedNumber, String bedSize, boolean hasBalcony, boolean nonsmoking) {
-        String sql = "INSERT INTO rooms (roomNumber, bedNumber, bedSize, hasBalcony, nonsmoking) VALUES (?, ?, ?, ?, ?)";
+    public boolean addRoom(int roomNumber, int bedNumber, String bedSize, boolean hasBalcony, boolean nonsmoking, double price) {
+        String sql = "INSERT INTO rooms (roomNumber, bedNumber, bedSize, hasBalcony, nonsmoking, price) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection conn = this.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, roomNumber);
@@ -209,6 +235,7 @@ public class DatabaseModel {
             pstmt.setString(3, bedSize);
             pstmt.setBoolean(4, hasBalcony);
             pstmt.setBoolean(5, nonsmoking);
+            pstmt.setDouble(6, price);
             int affectedRows = pstmt.executeUpdate();
             if (affectedRows == 1) {
                 System.out.println("Room " + roomNumber + " added successfully.");
@@ -221,8 +248,9 @@ public class DatabaseModel {
     }
 
 
-    public boolean addAccount(String firstName, String lastName, String email, String password, boolean isAdmin) {
-        String sql = "INSERT INTO accounts(firstName, lastName, email, password, isAdmin) VALUES(?,?,?,?,?)";
+
+    public boolean addAccount(String firstName, String lastName, String email, String password, boolean isAdmin, String cardNumber, String cardExpiration, String cardCCV) {
+        String sql = "INSERT INTO accounts(firstName, lastName, email, password, isAdmin, cardNumber, cardExpiration, cardCCV) VALUES(?,?,?,?,?,?,?,?)";
 
         try (Connection conn = this.connect();
              PreparedStatement statement = conn.prepareStatement(sql)) {
@@ -232,9 +260,12 @@ public class DatabaseModel {
             statement.setString(3, email);
             statement.setString(4, password);
             statement.setBoolean(5, isAdmin);
+            statement.setString(6, cardNumber);
+            statement.setString(7, cardExpiration);
+            statement.setString(8, cardCCV);
 
             int affectedRows = statement.executeUpdate();
-            return affectedRows == 1; // Return true if one row was inserted
+            return affectedRows == 1; //return true if inserted
         } catch (SQLException e) {
             System.out.println(e.getMessage());
             return false;
@@ -283,14 +314,6 @@ public class DatabaseModel {
 
     public static void main(String[] args) {
         DatabaseModel dbModel = new DatabaseModel();
-        
-        //for testung, add an account
-        boolean isAdded = dbModel.addAccount("John", "Doe", "johndoe@gmail.com", "password", false);
-        if (isAdded) {
-            System.out.println("Account successfully added.");
-        } else {
-            System.out.println("Failed to add account.");
-        }
     }
 
 
@@ -403,6 +426,106 @@ public class DatabaseModel {
 	        System.out.println(e.getMessage());
 	    }
 	    return null;
+	}
+	
+	public boolean hasCardInfo(String email) {
+	    String sql = "SELECT cardNumber FROM accounts WHERE email = ? AND cardNumber IS NOT NULL AND cardNumber != ''";
+
+	    try (Connection conn = this.connect();
+	         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+	        pstmt.setString(1, email);
+	        try (ResultSet rs = pstmt.executeQuery()) {
+	            
+	            return rs.next();
+	        }
+	    } catch (SQLException e) {
+	        System.out.println("check card info error: " + e.getMessage());
+	    }
+	    return false;
+	}
+	
+	//get the id of last reservation for receipt purposes
+	public int getLastReservationID() {
+	    String sql = "SELECT MAX(reservationID) AS lastID FROM reservations";
+	    try (Connection conn = this.connect();
+	         Statement stmt = conn.createStatement();
+	         ResultSet rs = stmt.executeQuery(sql)) {
+	        if (rs.next()) {
+	            return rs.getInt("lastID");
+	        }
+	    } catch (SQLException e) {
+	        System.out.println("Error fetching last reservation ID: " + e.getMessage());
+	    }
+	    return -1; // error retrieving
+	}
+	
+	public boolean saveCardInfo(String email, String cardNumber, String cardExpiration, String cardCCV, boolean userIsUpdatingInfo) {
+	    // check if cc exists for checkout reasons, or if user is purposely wanting to update info
+	    if (!hasCardInfo(email) || userIsUpdatingInfo) {
+	        String sql = "UPDATE accounts SET cardNumber = ?, cardExpiration = ?, cardCCV = ? WHERE email = ?";
+
+	        try (Connection conn = this.connect();
+	             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+	            pstmt.setString(1, cardNumber);
+	            pstmt.setString(2, cardExpiration);
+	            pstmt.setString(3, cardCCV);
+	            pstmt.setString(4, email);
+
+	            int affectedRows = pstmt.executeUpdate();
+	            System.out.println("Card was successfully added: " + cardNumber);
+	            return affectedRows == 1; //true if success
+	        } catch (SQLException e) {
+	            System.out.println("Failed to save card info: " + e.getMessage());
+	        }
+	    }
+	    return false; //false if no success
+	    
+	}
+
+	public String getCardLastFour(String email) {
+	    String sql = "SELECT cardNumber FROM accounts WHERE email = ? AND cardNumber IS NOT NULL";
+	    try (Connection conn = this.connect();
+	         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+	        pstmt.setString(1, email);
+	        ResultSet rs = pstmt.executeQuery();
+	        if (rs.next()) {
+	            String cardNumber = rs.getString("cardNumber");
+	            if (cardNumber != null && cardNumber.length() >= 4) {
+	                return cardNumber.substring(cardNumber.length() - 4);
+	            }
+	        }
+	    } catch (SQLException e) {
+	        System.out.println("Failed to get last four CC numbers: " + e.getMessage());
+	    }
+	    return null; // err
+	}
+
+
+	public List<Map<String, String>> getReservationsByGuest(String email, boolean isFuture) {
+	    List<Map<String, String>> reservations = new ArrayList<>();
+	    String currentDate = LocalDate.now().toString(); // Get todays date
+	    String sql = isFuture ?
+	        "SELECT * FROM reservations WHERE guest = ? AND startDate >= ? ORDER BY startDate ASC" :
+	        "SELECT * FROM reservations WHERE guest = ? AND startDate < ? ORDER BY startDate DESC";
+
+	    try (Connection conn = this.connect();
+	         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+	        pstmt.setString(1, email);
+	        pstmt.setString(2, currentDate);
+	        try (ResultSet rs = pstmt.executeQuery()) {
+	            while (rs.next()) {
+	                Map<String, String> reservation = new HashMap<>();
+	                reservation.put("reservationID", String.valueOf(rs.getInt("reservationID")));
+	                reservation.put("startDate", rs.getString("startDate"));
+	                reservation.put("endDate", rs.getString("endDate"));
+	                reservation.put("roomNumber", String.valueOf(rs.getInt("roomNumber")));
+	                reservations.add(reservation);
+	            }
+	        }
+	    } catch (SQLException e) {
+	        System.err.println("Error fetching reservations: " + e.getMessage());
+	    }
+	    return reservations;
 	}
 
 

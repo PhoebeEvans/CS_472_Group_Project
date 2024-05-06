@@ -3,7 +3,7 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-    <title>Edit Profile - The Caribou Inn</title>
+    <title>Manage Card Details - The Caribou Inn</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
     <link rel="stylesheet" href="assets/css/main.css" />
@@ -54,48 +54,41 @@
             <section class="wrapper style5">
                 <div class="inner">
                     <section>
-                        <h3>Update Your Profile</h3>
-                        <p>Current information:</p>
-                        <p> <%= session.getAttribute("firstName") %> <%= session.getAttribute("lastName") %> </p>
-                        <p> <%= session.getAttribute("email") %></p>
-                        <form method="post" action="AccountServlet" id="updateProfileForm">
+                        <h3>Manage Card Details</h3>
+                        <% if (session.getAttribute("hasCardInfo") != null && (Boolean) session.getAttribute("hasCardInfo")) { %>
+                            <p>Would you like to update/replace the card on file ending in <%= session.getAttribute("lastFourCC") %>?</p>
+                        <% } else { %>
+                            <p>Add a card on file below.</p>
+                        <% } %>
+                        <form method="post" action="UpdateCardInfo" id="cardDetailsForm">
                             <div class="row gtr-uniform">
                                 <div class="col-6">
-                                    <label>First Name</label>
-                                    <input type="text" name="firstName" id="firstName" value="<%= session.getAttribute("firstName") %>" placeholder="First Name" />
+                                    <label>Card Number</label>
+                                    <input type="text" name="cardNumber" id="cardNumber" placeholder="Card Number" />
                                 </div>
-                                <div class="col-6">
-                                    <label>Last Name</label>
-                                    <input type="text" name="lastName" id="lastName" value="<%= session.getAttribute("lastName") %>" placeholder="Last Name" />
+                                <div class="col-3">
+                                    <label>Expiry Date</label>
+                                    <input type="text" name="expiryDate" id="expiryDate" placeholder="MM/YY" />
+                                </div>
+                                <div class="col-3">
+                                    <label>CVC</label>
+                                    <input type="text" name="cvc" id="cvc" placeholder="CVC" />
                                 </div>
                                 <div class="col-12">
-                                    <label>Email</label>
-                                    <input type="email" name="email" id="email" value="<%= session.getAttribute("email") %>" placeholder="Email" />
-                                </div>
-                                <div class="col-12">
-                                    <label>Old Password (Required)</label>
-                                    <input type="password" name="oldPassword" id="oldPassword" value="" placeholder="Old Password" />
-                                </div>
-                                <!-- Credit Card Update Button -->
-                                <div class="col-12">
-								    <% if (session.getAttribute("hasCardInfo") != null && (Boolean) session.getAttribute("hasCardInfo")) { %>
-								        <button type="button" onclick="location.href='manageCardDetails.jsp';">Update Card on File?</button>
-								    <% } else { %>
-								        <button type="button" onclick="location.href='manageCardDetails.jsp';">Add a Card on File?</button>
-								    <% } %>
-								</div>
-                                <div class="col-12">
-                                    <label>New Password</label>
-                                    <input type="password" name="newPassword" id="newPassword" value="" placeholder="New Password" />
+                                    <label>Password (Required for Verification)</label>
+                                    <input type="password" name="password" id="password" placeholder="Your Password" />
                                 </div>
                                 <!-- Hidden input field for action -->
                                 <div class="col-12">
-                                    <input type="hidden" name="action" value="updateProfile" />
+						            <input type="hidden" name="email" value="<%= session.getAttribute("email") %>" />
+						        </div>
+                                <div class="col-12">
+                                    <input type="hidden" name="action" value="<%= (session.getAttribute("hasCardInfo") != null && (Boolean) session.getAttribute("hasCardInfo")) ? "updateCard" : "addCard" %>" />
                                 </div>
                                 <!-- Break -->
                                 <div class="col-12">
                                     <ul class="actions">
-                                        <li><input type="submit" value="Update Profile" class="primary" /></li>
+                                        <li><input type="submit" value="<%= (session.getAttribute("hasCardInfo") != null && (Boolean) session.getAttribute("hasCardInfo")) ? "Update Card" : "Add Card" %>" class="primary" /></li>
                                         <li><a href="index.jsp" class="button">Back to Home</a></li>
                                     </ul>
                                 </div>
@@ -121,6 +114,6 @@
     <script src="assets/js/breakpoints.min.js"></script>
     <script src="assets/js/util.js"></script>
     <script src="assets/js/main.js"></script>
-    
+
 </body>
 </html>
