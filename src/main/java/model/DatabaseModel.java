@@ -641,7 +641,46 @@ public class DatabaseModel {
 	    }
 	    return details;
 	}
+	
+	public boolean updateRoom(int roomNumber, int bedNumber, String bedSize, boolean hasBalcony, boolean nonsmoking, double price) {
+	    String sql = "UPDATE rooms SET bedNumber = ?, bedSize = ?, hasBalcony = ?, nonsmoking = ?, price = ? WHERE roomNumber = ?";
+	    try (Connection conn = this.connect();
+	         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+	        pstmt.setInt(1, bedNumber);
+	        pstmt.setString(2, bedSize);
+	        pstmt.setBoolean(3, hasBalcony);
+	        pstmt.setBoolean(4, nonsmoking);
+	        pstmt.setDouble(5, price);
+	        pstmt.setInt(6, roomNumber);
+	        int affectedRows = pstmt.executeUpdate();
+	        return affectedRows > 0;
+	    } catch (SQLException e) {
+	        System.out.println("Failed to update room: " + e.getMessage());
+	        return false;
+	    }
+	}
 
+	public Map<String, Object> getRoomDetails(int roomNumber) {
+	    String sql = "SELECT * FROM rooms WHERE roomNumber = ?";
+	    try (Connection conn = this.connect();
+	         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+	        pstmt.setInt(1, roomNumber);
+	        ResultSet rs = pstmt.executeQuery();
+	        if (rs.next()) {
+	            Map<String, Object> roomDetails = new HashMap<>();
+	            roomDetails.put("roomNumber", rs.getInt("roomNumber"));
+	            roomDetails.put("bedNumber", rs.getInt("bedNumber"));
+	            roomDetails.put("bedSize", rs.getString("bedSize"));
+	            roomDetails.put("hasBalcony", rs.getBoolean("hasBalcony"));
+	            roomDetails.put("nonsmoking", rs.getBoolean("nonsmoking"));
+	            roomDetails.put("price", rs.getDouble("price"));
+	            return roomDetails;
+	        }
+	    } catch (SQLException e) {
+	        System.out.println("Failed to fetch room details: " + e.getMessage());
+	    }
+	    return null;
+	}
 
 
 }

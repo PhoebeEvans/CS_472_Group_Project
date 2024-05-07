@@ -141,6 +141,31 @@
 						        </div>
 						    </div>
 						</form>
+						
+					<hr>
+						
+					<h3>Add or Edit a Room</h3>
+					<p>Update Room details or add a new room</p>
+					<form method="post" action="RoomServlet" class="grid">
+					    <input type="hidden" name="origin" value="admin" />
+					    <div class="row gtr-uniform">
+					        <div class="col-12">
+					            <input type="text" id="roomDetails" name="roomDetails" placeholder="Enter Room Number" required>
+					        </div>
+					        <div class="col-12">
+					            <ul class="actions">
+					                <li><input type="submit" name="action" value="Update This Room" class="primary"></li>
+					            </ul>
+					        </div>
+					        <div class="col-12">
+					            <ul class="actions">
+					                <li><input type="submit" name="action" value="Add This Room" class="primary"></li>
+					            </ul>
+					        </div>
+					    </div>
+					</form>
+
+					<hr />
 				</div>
 			</section>
 		</article>
