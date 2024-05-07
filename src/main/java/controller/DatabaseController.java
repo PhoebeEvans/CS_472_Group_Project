@@ -120,7 +120,7 @@ public class DatabaseController extends HttpServlet {
                 
                 
                 //email form
-                String body = "\"<h1>Account Activated</h1><p>Your Caribou Inn Account Has Been Activated.</p>\"";
+                String body = "Hello " + firstName + " Your Caribou Inn Account Has Been Activated.";
                 //
                 String subject = "Account Activated";
                 //send welcome email

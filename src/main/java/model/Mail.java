@@ -62,7 +62,7 @@ public class Mail
 	    
 	    
 		 MimeBodyPart bodyPart = new MimeBodyPart();
-		 bodyPart.setContent(emailBody,"text/html");
+		 bodyPart.setText(emailBody);
 		 MimeMultipart multiPart = new MimeMultipart();
 		 multiPart.addBodyPart(bodyPart);
 		 mimeMessage.setContent(multiPart);
