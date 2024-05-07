@@ -7,6 +7,10 @@
 	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
 */
 
+input[type="date"] {
+    color: #000; 
+}
+
 html, body, div, span, applet, object,
 iframe, h1, h2, h3, h4, h5, h6, p, blockquote,
 pre, a, abbr, acronym, address, big, cite,
@@ -102,12 +106,16 @@ input, select, textarea {
 		}
 
 	body, input, select, textarea {
-		color: rgb(0, 0, 0);
+		color: #fff;
 		font-family: "Open Sans", Helvetica, sans-serif;
 		font-size: 15pt;
 		font-weight: 400;
 		letter-spacing: 0.075em;
 		line-height: 1.65em;
+	}
+	
+	html body input[type="date"] {
+	    color: #000; 
 	}
 
 		@media screen and (max-width: 1680px) {
@@ -3996,4 +4004,10 @@ input, select, textarea {
 
 	body.is-mobile.landing #footer {
 		background-color: #1d242a;
+	}
+	
+	
+/* custom date color fix*/
+	input[type="date"] {
+    	color: #000; 
 	}

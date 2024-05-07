@@ -1,9 +1,9 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-    pageEncoding="ISO-8859-1"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
 <!DOCTYPE HTML>
 <html>
 <head>
-    <title>Error - The Caribou Inn</title>
+    <title>Reservation Confirmed - The Caribou Inn</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
     <link rel="stylesheet" href="assets/css/main.css" />
@@ -16,7 +16,7 @@
 
         <!-- Header -->
         <header id="header" class="alt">
-            <h1><a href="index.html">Caribou Inn</a></h1>
+            <h1><a href="index.jsp">Caribou Inn</a></h1>
             <nav id="nav">
                 <ul>
                     <li class="special">
@@ -38,12 +38,10 @@
             <section class="wrapper style5">
                 <div class="inner">
                     <section>
-                        <h3>An Error Occurred</h3>
-                        <p>Sorry, something went wrong. Please try again or contact support if the problem persists.</p>
-                        <!-- Optionally provide a link for the user to go back or to the homepage -->
+                        <h3>Reservation Confirmed</h3>
+                        <p>Your reservation has been successfully processed and confirmed. A confirmation email has been sent to you.</p>
                         <ul class="actions">
-                            <li><a href="index.jsp" class="button primary">Go to Homepage</a></li>
-                            <li><a href="login.html" class="button">Try Again</a></li>
+                            <li><a href="index.jsp" class="button primary">Back to Home</a></li>
                         </ul>
                     </section>
                 </div>
@@ -65,6 +63,12 @@
     <script src="assets/js/breakpoints.min.js"></script>
     <script src="assets/js/util.js"></script>
     <script src="assets/js/main.js"></script>
+    <script>
+        // Clear the cart from local storage
+        window.addEventListener('load', () => {
+            localStorage.removeItem('cart');
+        });
+    </script>
 
 </body>
 </html>

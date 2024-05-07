@@ -34,10 +34,20 @@
 									<a href="#menu" class="menuToggle"><span>Menu</span></a>
 									<div id="menu">
 										<ul>
-											<li><a href="index.html">Home</a></li>
+											<!--MENU LIST THAT IS DEPENDANT ON USER ACCOUNT  -->
+											<% if (session.getAttribute("isAdmin") != null) { %>
+												<li><a href="employeePage.jsp">Administrator Portal</a></li>
+		                                    <% } %>
+											<li><a href="index.jsp">Home</a></li>
 											<li><a href="generic.html">Amenities</a></li>
-											<li><a href="elements.html">Reserve a Room</a></li>
-											<li><a href="login.html">Log In or Sign Up</a></li>
+											<li><a href="chooseRoomsAsGuest.jsp">Reserve a Room</a></li>
+											<li><a href="ViewReservations">Your Reservations</a></li>
+											<% if (session.getAttribute("firstName") != null) { %>
+												<li><a href="editProfile.jsp">Edit Profile</a></li>
+                                      	 		<li><a href="AccountServlet?action=logout">Sign Out</a></li>
+		                                    <% } else { %>
+		                                        <li><a href="login.html">Log In or Sign Up</a></li>
+		                                    <% } %>
 										</ul>
 									</div>
 								</li>
@@ -52,7 +62,7 @@
 							<p>Get away from it all.<br />
 							Enjoy the stay.</p>
 							<ul class="actions special">
-								<li><a href="#" class="button primary">Reserve a room</a></li>
+								<li><a href="chooseRoomsAsGuest.jsp" class="button primary">Reserve a room</a></li>
 							</ul>
 						</div>
 						<a href="#one" class="more scrolly">Learn More</a>
@@ -62,10 +72,10 @@
 					<section id="one" class="wrapper style1 special">
 						<div class="inner">
 							<header class="major">
-								<h2>Reserve a room at our top rated hotel!<br />
-								Rated one of the best hotels for family retreats!</h2>
-								<p>Enjoy our luxury amenities<br />
-								free of cost with your stay.</p>
+								<h2>Arcu aliquet vel lobortis ata nisl<br />
+								eget augue amet aliquet nisl cep donec</h2>
+								<p>Aliquam ut ex ut augue consectetur interdum. Donec amet imperdiet eleifend<br />
+								fringilla tincidunt. Nullam dui leo Aenean mi ligula, rhoncus ullamcorper.</p>
 							</header>
 						</div>
 					</section>
@@ -74,23 +84,23 @@
 					<section id="two" class="wrapper alt style2">
 						<section class="spotlight">
 							<div class="image"><img src="images/pic01.jpg" alt="" /></div><div class="content">
-								<h2>Luxury and Spacious<br />
-								Hotel Rooms</h2>
-								<p>Every detail exudes opulence and sophistication. From the moment you enter, you're enveloped in an atmosphere of grandeur, with lavish furnishings, sumptuous fabrics, and exquisite decor creating a sense of unparalleled luxury. Sink into a plush king-sized bed adorned with fine linens, unwind in a marble-clad en-suite bathroom complete with a deep soaking tub and indulgent bath amenities, and bask in breathtaking views from expansive windows. Impeccable service attends to your every need, ensuring a stay that is nothing short of extraordinary.</p>
+								<h2>Magna primis lobortis<br />
+								sed ullamcorper</h2>
+								<p>Aliquam ut ex ut augue consectetur interdum. Donec hendrerit imperdiet. Mauris eleifend fringilla nullam aenean mi ligula.</p>
 							</div>
 						</section>
 						<section class="spotlight">
 							<div class="image"><img src="images/pic02.jpg" alt="" /></div><div class="content">
-								<h2>Tranquil and Healing<br />
-								Pools and Spas</h2>
-								<p>Embodies sophistication and tranquility in every detail. Enclosed within an architectural masterpiece, the pool exudes an ambiance of understated elegance, with soft lighting casting a warm, inviting glow over the serene waters. Dive into the shimmering pool, where the temperature is always perfect, and swim beneath the arching ceiling adorned with intricate designs or skylights that bathe the space in natural light. Surrounding the pool are plush loungers and cozy seating areas, where guests can unwind in privacy or socialize in intimate luxury. Whether you're seeking a refreshing swim or a moment of quiet contemplation, this indoor oasis offers an unparalleled retreat from the bustle of the outside world.</p>
+								<h2>Tortor dolore feugiat<br />
+								elementum magna</h2>
+								<p>Aliquam ut ex ut augue consectetur interdum. Donec hendrerit imperdiet. Mauris eleifend fringilla nullam aenean mi ligula.</p>
 							</div>
 						</section>
 						<section class="spotlight">
 							<div class="image"><img src="images/pic03.jpg" alt="" /></div><div class="content">
-								<h2>Fine and Grandeur<br />
-								Dining and Bars</h2>
-								<p>The art of fine dining. Step into a world of refined elegance, where soaring ceilings, sparkling chandeliers, and plush furnishings create an ambiance of opulence and sophistication. Each detail is meticulously curated, from the crisp linen tablecloths to the gleaming silverware, setting the stage for an unforgettable gastronomic journey. Savour the creations of world-class chefs, whose innovative menus showcase the finest ingredients sourced from around the globe, expertly prepared to tantalize the palate and ignite the senses. Impeccable service attends to your every need, ensuring a dining experience that is nothing short of extraordinary, whether you're indulging in a romantic dinner for two or gathering with friends and family to celebrate life's special moments.</p>
+								<h2>Augue eleifend aliquet<br />
+								sed condimentum</h2>
+								<p>Aliquam ut ex ut augue consectetur interdum. Donec hendrerit imperdiet. Mauris eleifend fringilla nullam aenean mi ligula.</p>
 							</div>
 						</section>
 					</section>
@@ -148,16 +158,7 @@
 
 				<!-- Footer -->
 					<footer id="footer">
-						<ul class="icons">
-							<li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
-							<li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
-							<li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
-							<li><a href="#" class="icon brands fa-dribbble"><span class="label">Dribbble</span></a></li>
-							<li><a href="#" class="icon solid fa-envelope"><span class="label">Email</span></a></li>
-						</ul>
-						<ul class="copyright">
-							<li>&copy; Untitled</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
-						</ul>
+						...
 					</footer>
 
 			</div>
