@@ -28,7 +28,7 @@
     <div id="page-wrapper">
         <!-- Header -->
         <header id="header">
-            <h1><a href="index.html">Caribou Inn - Your Reservations</a></h1>
+            <h1><a href="index.jsp">Caribou Inn - Your Reservations</a></h1>
         </header>
 
         <!-- Main Content -->
