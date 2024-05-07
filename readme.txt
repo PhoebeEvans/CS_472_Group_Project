@@ -8,7 +8,7 @@
 2. Go to `File > Import...`.
 3. Choose `Git > Projects from Git`, then click `Next`.
 4. Select `Clone URI` and click `Next`.
-5. Enter the Repository UR: "https://github.com/PhoebeEvans/CS_472_Group_Project.git"
+5. Enter the Repository URI: "https://github.com/PhoebeEvans/CS_472_Group_Project.git"
 6. Choose the Master branch and click `Next`.
 7. Specify the local storage location for the repository and click `Next`.
 8. Select `Import as general project`, then click `Finish`.
