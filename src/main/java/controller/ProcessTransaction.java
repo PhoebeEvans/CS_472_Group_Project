@@ -48,8 +48,8 @@ public class ProcessTransaction extends HttpServlet {
 
             if (transactionAdded) {
             	//email form
-                String subject = "Reservation Conformation - Caribou Inn.";
-                String body = "Hello " + guest + ",\nYour room " + roomNumber + " at Caribou Inn has been reserved from " + startDate + " to " + endDate + ".";
+                String subject = "Reservation Conformation - Caribou Inn - " + reservationID;
+                String body = "Hello " + guest + ",\nYour room " + roomNumber + " at Caribou Inn has been reserved from " + startDate + " to " + endDate + ".\nConformation Number: " + reservationID+".";
                 //send welcome email
                 Mail newEmail = new Mail();
                 
