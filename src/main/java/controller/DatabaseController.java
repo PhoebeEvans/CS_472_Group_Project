@@ -1,7 +1,9 @@
 package controller;
 
+import model.Mail;
 import model.DatabaseModel;
 
+import javax.mail.MessagingException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -11,13 +13,13 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 
 @WebServlet("/AccountServlet")
 public class DatabaseController extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     private DatabaseModel dbModel = new DatabaseModel();
-
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
@@ -27,11 +29,19 @@ public class DatabaseController extends HttpServlet {
         if ("login".equals(action)) {
             System.out.println("Attempting to log in"); // Log login attempt
             // Login logic
+            
+            
             String email = request.getParameter("email");
             String password = request.getParameter("password");
 
             // Check credentials with database
-            boolean isValidUser = dbModel.checkCredentials(email, password);
+            boolean isValidUser = false;
+			try {
+				isValidUser = dbModel.checkCredentials(email, password);
+			} catch (NoSuchAlgorithmException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
             System.out.println("Credentials valid: " + isValidUser); //logging
 
             if (isValidUser) {
@@ -83,7 +93,13 @@ public class DatabaseController extends HttpServlet {
             boolean isAdmin = false; // Or you can take this as a parameter from the form if needed.
 
             // Attempt to add the account
-            boolean accountCreated = dbModel.addAccount(firstName, lastName, email, password, isAdmin, null, null, null);
+            boolean accountCreated = false;
+			try {
+				accountCreated = dbModel.addAccount(firstName, lastName, email, password, isAdmin, null, null, null);
+			} catch (NoSuchAlgorithmException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 
             // Check if account creation was successful
             if (accountCreated) {
@@ -101,6 +117,24 @@ public class DatabaseController extends HttpServlet {
                 // Redirect to the home page
                 System.out.println("Redirecting to index.jsp"); // Log redirectionm
                 response.sendRedirect("index.jsp");
+                
+                
+                //email form
+                String body = "Hello " + firstName + " Your Caribou Inn Account Has Been Activated.";
+                //
+                String subject = "Account Activated";
+                //send welcome email
+                Mail newEmail = new Mail();
+                
+                try {
+                	System.out.println("try");
+    				newEmail.send(email, subject, body);
+    			} catch (MessagingException | IOException e) {
+    				// TODO Auto-generated catch block
+    				System.out.println("fail");
+    				e.printStackTrace();
+    			}
+                
                 return;
             }
 
@@ -121,17 +155,27 @@ public class DatabaseController extends HttpServlet {
         	String adminEmail = request.getParameter("adminEmail");
             String adminPassword = request.getParameter("adminPassword");
             
-            if (dbModel.checkCredentials(adminEmail, adminPassword)) {
-            	handleUpdateOtherUser(request, response);
-            } else {
-                // Admin credentials are not valid
-                response.sendRedirect("badCredentials.jsp?referrer=editProfileAsAdmin.jsp");
-            }
+            try {
+				if (dbModel.checkCredentials(adminEmail, adminPassword)) {
+					handleUpdateOtherUser(request, response);
+				} else {
+				    // Admin credentials are not valid
+				    response.sendRedirect("badCredentials.jsp?referrer=editProfileAsAdmin.jsp");
+				}
+			} catch (NoSuchAlgorithmException | IOException | ServletException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
             
         }
         
         else if ("updateProfile".equals(action)) {
-            handleProfileUpdate(request, response);
+            try {
+				handleProfileUpdate(request, response);
+			} catch (NoSuchAlgorithmException | IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
         }
         
         else {
@@ -174,7 +218,7 @@ public class DatabaseController extends HttpServlet {
         }
     }
     
-    private void handleUpdateOtherUser(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+    private void handleUpdateOtherUser(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException, NoSuchAlgorithmException {
         HttpSession session = request.getSession();
         String adminEmail = request.getParameter("adminEmail");
         String adminPassword = request.getParameter("adminPassword");
@@ -206,7 +250,7 @@ public class DatabaseController extends HttpServlet {
         }
     }
     
-    private void handleProfileUpdate(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    private void handleProfileUpdate(HttpServletRequest request, HttpServletResponse response) throws IOException, NoSuchAlgorithmException {
         String email = request.getParameter("email");
         String oldPassword = request.getParameter("oldPassword");
         String newPassword = request.getParameter("newPassword");

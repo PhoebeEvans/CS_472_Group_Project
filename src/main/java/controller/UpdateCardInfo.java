@@ -4,6 +4,8 @@ import javax.servlet.*;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
+
 import model.DatabaseModel;
 
 @WebServlet("/UpdateCardInfo")
@@ -21,11 +23,16 @@ public class UpdateCardInfo extends HttpServlet {
         DatabaseModel dbModel = new DatabaseModel();
 
         //check if this person is who they say they are
-        if (!dbModel.checkCredentials(email, password)) {
-            // redirect to bad credentials if bad pass
-            response.sendRedirect("badCredentials.jsp?referrer=manageCardDetails.jsp");
-            return; 
-        }
+        try {
+			if (!dbModel.checkCredentials(email, password)) {
+			    // redirect to bad credentials if bad pass
+			    response.sendRedirect("badCredentials.jsp?referrer=manageCardDetails.jsp");
+			    return; 
+			}
+		} catch (NoSuchAlgorithmException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         
         System.out.println("Action received: " + action);
 

@@ -20,6 +20,14 @@ public class ViewGuestsReservations extends HttpServlet {
         }
 
         DatabaseModel dbModel = new DatabaseModel();
+        //get coupon details
+        Map<String, Double> couponInfo = dbModel.getCouponDetails(email);
+        request.setAttribute("amountNeeded", 500 - (couponInfo.get("totalSpent") % 500));
+        double totalSpent = couponInfo.get("totalSpent");
+        double couponsRedeemed = couponInfo.get("couponsRedeemed");
+        int availableCoupons = (int)((totalSpent / 500) - couponsRedeemed);
+        request.setAttribute("availableCoupons", availableCoupons);
+
         List<Map<String, String>> futureReservations = dbModel.getReservationsByGuest(email, true);
         List<Map<String, String>> pastReservations = dbModel.getReservationsByGuest(email, false);
 

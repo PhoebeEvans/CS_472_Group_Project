@@ -2,6 +2,7 @@ package controller;
 
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.security.NoSuchAlgorithmException;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -20,7 +21,14 @@ public class AppContextListener implements ServletContextListener {
         dbModel.createRoomsTable();
         
         // Add the test account if it doesn't exist
-        boolean isAdded = dbModel.addAccount("John", "Doe", "johndoe@gmail.com", "password", true, null, null, null);
+        boolean isAdded = false;
+		try {
+			isAdded = dbModel.addAccount("John", "Doe", "johndoe@gmail.com", "password", true, null, null, null);
+			isAdded = dbModel.addAccount("Phoebe", "Evans", "pe.computerscience@gmail.com", "1234", true, null, null, null);
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         if (isAdded) {
             System.out.println("Test account successfully added.");
         } else {
