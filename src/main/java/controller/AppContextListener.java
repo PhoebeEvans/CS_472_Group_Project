@@ -24,6 +24,7 @@ public class AppContextListener implements ServletContextListener {
         boolean isAdded = false;
 		try {
 			isAdded = dbModel.addAccount("John", "Doe", "johndoe@gmail.com", "password", true, null, null, null);
+			isAdded = dbModel.addAccount("Phoebe", "Evans", "pe.computerscience@gmail.com", "1234", true, null, null, null);
 		} catch (NoSuchAlgorithmException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

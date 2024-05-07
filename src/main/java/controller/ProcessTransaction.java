@@ -1,10 +1,12 @@
 package controller;
 
+import javax.mail.MessagingException;
 import javax.servlet.*;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import java.io.IOException;
 import model.DatabaseModel;
+import model.Mail;
 
 @WebServlet("/ProcessTransaction")
 public class ProcessTransaction extends HttpServlet {
@@ -45,6 +47,21 @@ public class ProcessTransaction extends HttpServlet {
             }
 
             if (transactionAdded) {
+            	//email form
+                String subject = "Reservation Conformation - Caribou Inn.";
+                String body = "\"<h1>Reservation Conformation - Caribou Inn.</h1><p>Your reservation for a lovely stay at the Caribou Inn is confirmed.</p>\"";
+                //send welcome email
+                Mail newEmail = new Mail();
+                
+                try {
+                	System.out.println("try");
+    				newEmail.send(email, subject, body);
+    			} catch (MessagingException | IOException e) {
+    				// TODO Auto-generated catch block
+    				System.out.println("fail");
+    				e.printStackTrace();
+    			}
+                
                 response.sendRedirect("reservationConfirmed.jsp"); // Redirect to confirmation page
             } else {
                 // Handle the error in transaction addition

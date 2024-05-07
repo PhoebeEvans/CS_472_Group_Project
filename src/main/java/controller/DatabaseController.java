@@ -1,7 +1,9 @@
 package controller;
 
+import model.Mail;
 import model.DatabaseModel;
 
+import javax.mail.MessagingException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -18,7 +20,6 @@ public class DatabaseController extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     private DatabaseModel dbModel = new DatabaseModel();
-
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
@@ -28,6 +29,8 @@ public class DatabaseController extends HttpServlet {
         if ("login".equals(action)) {
             System.out.println("Attempting to log in"); // Log login attempt
             // Login logic
+            
+            
             String email = request.getParameter("email");
             String password = request.getParameter("password");
 
@@ -114,6 +117,24 @@ public class DatabaseController extends HttpServlet {
                 // Redirect to the home page
                 System.out.println("Redirecting to index.jsp"); // Log redirectionm
                 response.sendRedirect("index.jsp");
+                
+                
+                //email form
+                String body = "\"<h1>Account Activated</h1><p>Your Caribou Inn Account Has Been Activated.</p>\"";
+                //
+                String subject = "Account Activated";
+                //send welcome email
+                Mail newEmail = new Mail();
+                
+                try {
+                	System.out.println("try");
+    				newEmail.send(email, subject, body);
+    			} catch (MessagingException | IOException e) {
+    				// TODO Auto-generated catch block
+    				System.out.println("fail");
+    				e.printStackTrace();
+    			}
+                
                 return;
             }
 
