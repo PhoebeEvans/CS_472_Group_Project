@@ -1,7 +1,9 @@
 package controller;
 
 import model.DatabaseModel;
+import model.Mail;
 
+import javax.mail.MessagingException;
 import javax.servlet.*;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
@@ -34,6 +36,28 @@ public class CancelReservation extends HttpServlet {
             if (transactionDetails != null) {
                 double refundAmount = -Double.parseDouble(transactionDetails.get("totalAmount"));
                 dbModel.addTransaction(Integer.parseInt(reservationId), transactionDetails.get("email"), refundAmount, transactionDetails.get("startDate"), transactionDetails.get("endDate"));
+                
+                int reservationID = Integer.parseInt(reservationId);
+                double cost = Double.parseDouble(transactionDetails.get("totalAmount"));
+                String email = transactionDetails.get("email");
+                String startDate = transactionDetails.get("startDate");
+                String endDate = transactionDetails.get("endDate");
+                
+                
+                ////email form
+                String subject = "Reservation Deleted - Caribou Inn - " + reservationID;
+                String body = "Hello " + email + ",\nYour reservation " + reservationID + " at Caribou Inn from " + startDate + " to " + endDate + " has been canceled.\nThe sum of " + cost + " has been refunded.";
+                //send welcome email
+                Mail newEmail = new Mail();
+                
+                try {
+                	System.out.println("try");
+    				newEmail.send(email, subject, body);
+    			} catch (MessagingException | IOException e) {
+    				// TODO Auto-generated catch block
+    				System.out.println("fail");
+    				e.printStackTrace();
+    			}
             }
 
             response.sendRedirect("guestReservations.jsp");
