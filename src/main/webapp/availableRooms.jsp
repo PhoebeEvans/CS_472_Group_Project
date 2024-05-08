@@ -14,8 +14,38 @@
     <div id="page-wrapper">
         <!-- Header -->
         <header id="header">
-            <h1><a href="index.html">CARIBOU INN - Administrator Portal</a></h1>
-            <!-- Navigation ... -->
+            <h1><a href="index.jsp">Caribou Inn</a></h1>
+						<nav id="nav">
+							<ul>
+								<li class="special">
+							        <% if (session.getAttribute("firstName") != null) { %>
+							            Hello, <%= session.getAttribute("firstName") %>
+							        <% } else { %>
+							            Hello, Guest
+							        <% } %>
+							    </li>
+								<li class="special">
+									<a href="#menu" class="menuToggle"><span>Menu</span></a>
+									<div id="menu">
+										<ul>
+											<!--MENU LIST THAT IS DEPENDANT ON USER ACCOUNT  -->
+											<% if (session.getAttribute("isAdmin") != null) { %>
+												<li><a href="employeePage.jsp">Administrator Portal</a></li>
+		                                    <% } %>
+											<li><a href="index.jsp">Home</a></li>
+											<li><a href="chooseRoomsAsGuest.jsp">Reserve a Room</a></li>
+											<li><a href="ViewReservations">Your Reservations</a></li>
+											<% if (session.getAttribute("firstName") != null) { %>
+												<li><a href="editProfile.jsp">Edit Profile</a></li>
+                                      	 		<li><a href="AccountServlet?action=logout">Sign Out</a></li>
+		                                    <% } else { %>
+		                                        <li><a href="login.html">Log In or Sign Up</a></li>
+		                                    <% } %>
+										</ul>
+									</div>
+								</li>
+							</ul>
+						</nav>
         </header>
 
         <!-- Main Content -->

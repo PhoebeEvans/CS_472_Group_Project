@@ -21,6 +21,7 @@
 				<!-- Header -->
 					<header id="header" class="alt">
 						<h1><a href="index.html">Caribou Inn</a></h1>
+						<h1><a href="index.html">Caribou Inn</a></h1>
 						<nav id="nav">
 							<ul>
 								<li class="special">
@@ -39,7 +40,6 @@
 												<li><a href="employeePage.jsp">Administrator Portal</a></li>
 		                                    <% } %>
 											<li><a href="index.jsp">Home</a></li>
-											<li><a href="generic.html">Amenities</a></li>
 											<li><a href="chooseRoomsAsGuest.jsp">Reserve a Room</a></li>
 											<li><a href="ViewReservations">Your Reservations</a></li>
 											<% if (session.getAttribute("firstName") != null) { %>
