@@ -16,37 +16,38 @@
 
         <!-- Header -->
         <header id="header" class="alt">
-            <h1><a href="index.html">Caribou Inn</a></h1>
+            <h1><a href="index.jsp">Caribou Inn</a></h1>
             <nav id="nav">
-                <ul>
-                    <li class="special">
-                        <% if (session.getAttribute("firstName") != null) { %>
-                            Hello, <%= session.getAttribute("firstName") %>
-                        <% } else { %>
-                            Hello, Guest
-                        <% } %>
-                    </li>
-                    <li class="special">
-                        <a href="#menu" class="menuToggle"><span>Menu</span></a>
-                        <div id="menu">
-                            <ul>
-                                <% if (session.getAttribute("isAdmin") != null) { %>
-                                    <li><a href="employeePage.jsp">Administrator Portal</a></li>
-                                <% } %>
-                                <li><a href="index.jsp">Home</a></li>
-                                <li><a href="generic.html">Amenities</a></li>
-                                <li><a href="elements.html">Reserve a Room</a></li>
-                                <% if (session.getAttribute("firstName") != null) { %>
-                                    <li><a href="editProfile.jsp">Edit Profile</a></li>
-                                    <li><a href="AccountServlet?action=logout">Sign Out</a></li>
-                                <% } else { %>
-                                    <li><a href="login.html">Log In or Sign Up</a></li>
-                                <% } %>
-                            </ul>
-                        </div>
-                    </li>
-                </ul>
-            </nav>
+							<ul>
+								<li class="special">
+							        <% if (session.getAttribute("firstName") != null) { %>
+							            Hello, <%= session.getAttribute("firstName") %>
+							        <% } else { %>
+							            Hello, Guest
+							        <% } %>
+							    </li>
+								<li class="special">
+									<a href="#menu" class="menuToggle"><span>Menu</span></a>
+									<div id="menu">
+										<ul>
+											<!--MENU LIST THAT IS DEPENDANT ON USER ACCOUNT  -->
+											<% if (session.getAttribute("isAdmin") != null) { %>
+												<li><a href="employeePage.jsp">Administrator Portal</a></li>
+		                                    <% } %>
+											<li><a href="index.jsp">Home</a></li>
+											<li><a href="chooseRoomsAsGuest.jsp">Reserve a Room</a></li>
+											<li><a href="ViewReservations">Your Reservations</a></li>
+											<% if (session.getAttribute("firstName") != null) { %>
+												<li><a href="editProfile.jsp">Edit Profile</a></li>
+                                      	 		<li><a href="AccountServlet?action=logout">Sign Out</a></li>
+		                                    <% } else { %>
+		                                        <li><a href="login.html">Log In or Sign Up</a></li>
+		                                    <% } %>
+										</ul>
+									</div>
+								</li>
+							</ul>
+						</nav>
         </header>
 
         <!-- Main -->
@@ -73,6 +74,11 @@
                                     <input type="email" name="email" id="email" value="<%= session.getAttribute("email") %>" placeholder="Email" />
                                 </div>
                                 <div class="col-12">
+                                    <label>Old Password (Required)</label>
+                                    <input type="password" name="oldPassword" id="oldPassword" value="" placeholder="Old Password" />
+                                </div>
+                                <!-- Credit Card Update Button -->
+                                <div class="col-12">
 								    <% if (session.getAttribute("hasCardInfo") != null && (Boolean) session.getAttribute("hasCardInfo")) { %>
 								        <button type="button" onclick="location.href='manageCardDetails.jsp';">Update Card on File?</button>
 								    <% } else { %>
@@ -83,10 +89,7 @@
                                     <label>New Password</label>
                                     <input type="password" name="newPassword" id="newPassword" value="" placeholder="New Password" />
                                 </div>
-                                <div class="col-12">
-                                    <label>Old Password (Required)</label>
-                                    <input type="password" name="oldPassword" id="oldPassword" value="" placeholder="Old Password" />
-                                </div>
+                                <!-- Hidden input field for action -->
                                 <div class="col-12">
                                     <input type="hidden" name="action" value="updateProfile" />
                                 </div>
